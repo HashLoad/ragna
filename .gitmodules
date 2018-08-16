@@ -1,0 +1,3 @@
+[submodule "modules/DataSetConverter4Delphi"]
+	path = modules/DataSetConverter4Delphi
+	url = git@github.com:ezequieljuliano/DataSetConverter4Delphi.git
