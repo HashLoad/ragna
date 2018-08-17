@@ -8,19 +8,22 @@ uses
 
 type
 
-  TOperatorType = (otWhere, otOr, otLike, otEquals, otOrder);
+  TOperatorType = (otWhere, otOr, otLike, otEquals, otOrder, otAnd);
 
   TPGCriteria = class(TInterfacedObject, ICriteria)
   const
     OPERATORS: array [low(TOperatorType) .. High(TOperatorType)
-      ] of string = ('WHERE', 'OR', 'LIKE', '=', 'ORDER BY');
+      ] of string = ('WHERE', 'OR', 'LIKE', '=', 'ORDER BY', 'AND');
   private
     FQuery: TFDQuery;
   public
     procedure Where(AField: string); overload;
     procedure Where(AField: TField); overload;
     procedure Where(AValue: Boolean); overload;
-    procedure &Or(AField: TField);
+    procedure &Or(AField: string); overload;
+    procedure &Or(AField: TField); overload;
+    procedure &And(AField: string); overload;
+    procedure &And(AField: TField); overload;
     procedure Like(AValue: string);
     procedure &Equals(AValue: Int64); overload;
     procedure &Equals(AValue: Boolean); overload;
@@ -43,6 +46,27 @@ implementation
 uses SysUtils;
 
 { TPGCriteria }
+
+procedure TPGCriteria.&And(AField: string);
+const
+  PHRASE = ' %s %s';
+begin
+  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otAnd], AField]));
+end;
+
+procedure TPGCriteria.&And(AField: TField);
+const
+  PHRASE = ' %s %s';
+begin
+  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otAnd], AField.Origin]));
+end;
+
+procedure TPGCriteria.&Or(AField: string);
+const
+  PHRASE = ' %s %s';
+begin
+  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otOr], AField]));
+end;
 
 constructor TPGCriteria.Create(AQuery: TFDQuery);
 begin

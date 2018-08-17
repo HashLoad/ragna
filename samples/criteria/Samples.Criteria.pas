@@ -14,15 +14,6 @@ uses
 
 type
   TSampleCriteria = class(TForm)
-    FDQuery: TFDQuery;
-    FDConnection: TFDConnection;
-    FDQueryid: TLargeintField;
-    FDQueryname: TWideStringField;
-    FDQuerycnpj: TWideStringField;
-    FDQuerysponsor_name: TWideStringField;
-    FDQuerysponsor_email: TWideStringField;
-    FDQuerysponsor_phone: TWideStringField;
-    FDQueryobservation: TDataSetField;
   private
     { Private declarations }
   public

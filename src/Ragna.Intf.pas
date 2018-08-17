@@ -20,7 +20,7 @@ type
     procedure EndCriteria;
     procedure ToJson(out AJSON: TJSONArray); overload;
     procedure ToJson(out AJSON: TJSONObject); overload;
-    procedure FromJson(const AJSON: TJSONObject);
+    procedure EditFromJson(const AJSON: TJSONObject);
   end;
 
   ICriteria = interface
@@ -28,7 +28,10 @@ type
     procedure Where(AField: string); overload;
     procedure Where(AField: TField); overload;
     procedure Where(AValue: Boolean); overload;
-    procedure &Or(AField: TField);
+    procedure &Or(AField: string); overload;
+    procedure &Or(AField: TField); overload;
+    procedure &And(AField: string); overload;
+    procedure &And(AField: TField); overload;
     procedure Like(AValue: string);
     procedure &Equals(AValue: Int64); overload;
     procedure &Equals(AValue: Boolean); overload;

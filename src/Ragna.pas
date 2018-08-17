@@ -22,11 +22,14 @@ type
     function EndCriteria: TFDQuery;
     function ToJson(out AJSON: TJSONArray): TFDQuery; overload;
     function ToJson(out AJSON: TJSONObject): TFDQuery; overload;
-    function FromJson(const AJSON: TJSONObject): TFDQuery;
+    function EditFromJson(const AJSON: TJSONObject): TFDQuery;
     function Where(AField: string): TFDQuery; overload;
     function Where(AField: TField): TFDQuery; overload;
     function Where(AValue: Boolean): TFDQuery; overload;
-    function &Or(AField: TField): TFDQuery;
+    function &Or(AField: TField): TFDQuery; overload;
+    function &Or(AField: string): TFDQuery; overload;
+    function &And(AField: TField): TFDQuery; overload;
+    function &And(AField: string): TFDQuery; overload;
     function Like(AValue: string): TFDQuery;
     function &Equals(AValue: Int64): TFDQuery; overload;
     function &Equals(AValue: Boolean): TFDQuery; overload;
@@ -38,6 +41,48 @@ implementation
 uses System.SysUtils;
 
 function TRagnaHelper.&Or(AField: TField): TFDQuery;
+var
+  LRagna: TRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.Criteria.&Or(AField);
+  finally
+    LRagna.Free;
+  end;
+
+  Result := Self;
+end;
+
+function TRagnaHelper.&And(AField: TField): TFDQuery;
+var
+  LRagna: TRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.Criteria.&And(AField);
+  finally
+    LRagna.Free;
+  end;
+
+  Result := Self;
+end;
+
+function TRagnaHelper.&And(AField: string): TFDQuery;
+var
+  LRagna: TRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.Criteria.&And(AField);
+  finally
+    LRagna.Free;
+  end;
+
+  Result := Self;
+end;
+
+function TRagnaHelper.&Or(AField: string): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -121,13 +166,13 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.FromJson(const AJSON: TJSONObject): TFDQuery;
+function TRagnaHelper.EditFromJson(const AJSON: TJSONObject): TFDQuery;
 var
   LRagna: TRagna;
 begin
   LRagna := TRagna.Create(Self);
   try
-    LRagna.FromJson(AJSON);
+    LRagna.EditFromJson(AJSON);
   finally
     LRagna.Free;
   end;

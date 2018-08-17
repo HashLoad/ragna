@@ -29,7 +29,7 @@ type
     procedure EndCriteria;
     procedure ToJson(out AJSON: TJSONArray); overload;
     procedure ToJson(out AJSON: TJSONObject); overload;
-    procedure FromJson(const AJSON: TJSONObject);
+    procedure EditFromJson(const AJSON: TJSONObject);
     constructor Create(AQuery: TFDQuery);
     destructor Destroy;
     property Query: TFDQuery read FQuery write FQuery;
@@ -96,7 +96,7 @@ begin
     .Equals(AValue);
 end;
 
-procedure TRagna.FromJson(const AJSON: TJSONObject);
+procedure TRagna.EditFromJson(const AJSON: TJSONObject);
 begin
   FQuery.RecordFromJSONObject(AJSON);
 end;
@@ -133,7 +133,7 @@ end;
 procedure TRagna.New(ABody: TJSONObject);
 begin
   OpenEmpty;
-  FQuery.FromJson(ABody);
+  FQuery.EditFromJson(ABody);
 end;
 
 procedure TRagna.RadicalResearch(AValue: string; AFields: array of TField);
@@ -199,7 +199,7 @@ begin
   FQuery
     .FindById(AField, AValue)
     .OpenUp
-    .FromJson(ABody);
+    .EditFromJson(ABody);
 end;
 
 end.
