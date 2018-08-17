@@ -3,7 +3,8 @@ unit Ragna.Criteria;
 interface
 
 uses
-  FireDAC.Comp.Client, StrUtils, Ragna.Intf, Data.DB;
+  FireDAC.Comp.Client, StrUtils, Ragna.Intf, Data.DB, FireDAC.Stan.Param,
+  System.Hash;
 
 type
 
@@ -16,6 +17,7 @@ type
   private
     FQuery: TFDQuery;
   public
+    procedure Where(AField: string); overload;
     procedure Where(AField: TField); overload;
     procedure Where(AValue: Boolean); overload;
     procedure &Or(AField: TField);
@@ -63,17 +65,25 @@ end;
 
 procedure TPGCriteria.Equals(AValue: Boolean);
 const
-  PHRASE = '%s %d';
+  PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], AValue]));
+  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], BoolToStr(AValue,
+    True)]));
 end;
 
 procedure TPGCriteria.Like(AValue: string);
 const
   PHRASE = '::text %s %s';
+var
+  LKeyParam: string;
+  LParam: TFDParam;
 begin
+  LKeyParam := THashMD5.Create.HashAsString;
   FQuery.SQL.Text := FQuery.SQL.Text +
-    format(PHRASE, [OPERATORS[otLike], AValue]);
+    format(PHRASE, [OPERATORS[otLike], ':' + LKeyParam]);
+  LParam := FQuery.ParamByName(LKeyParam);
+  LParam.DataType := ftString;
+  LParam.Value := AValue;
 end;
 
 procedure TPGCriteria.Order(AField: TField);
@@ -83,11 +93,18 @@ begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otOrder], AField.Origin]));
 end;
 
+procedure TPGCriteria.Where(AField: string);
+const
+  PHRASE = '%s %s';
+begin
+  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otWhere], AField]));
+end;
+
 procedure TPGCriteria.Where(AValue: Boolean);
 const
   PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otWhere], AValue]));
+  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otWhere], BoolToStr(AValue, True)]));
 end;
 
 procedure TPGCriteria.&Or(AField: TField);

@@ -10,12 +10,12 @@ type
   IRagna = interface
     ['{0F1AD1E9-A82C-44BE-9208-685B9C3C77F9}']
     procedure Paginate(AOffSet, ALimit: integer);
-    procedure RadicalResearch(AValue: string; AFields: array of TFields);
+    procedure RadicalResearch(AValue: string; AFields: array of TField);
     procedure Delete(AField: TField; AValue: Int64);
     procedure FindById(AField: TField; AValue: Int64);
     procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
     procedure New(ABody: TJSONObject);
-    procedure Open;
+    procedure OpenUp;
     procedure StartCriteria;
     procedure EndCriteria;
     procedure ToJson(out AJSON: TJSONArray); overload;
@@ -25,6 +25,7 @@ type
 
   ICriteria = interface
     ['{BC7603D3-DB7D-4A61-AA73-E1152A933E07}']
+    procedure Where(AField: string); overload;
     procedure Where(AField: TField); overload;
     procedure Where(AValue: Boolean); overload;
     procedure &Or(AField: TField);

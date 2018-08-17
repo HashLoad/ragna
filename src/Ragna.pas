@@ -10,19 +10,20 @@ type
   TRagnaHelper = class helper for TFDQuery
   public
     function Paginate(AOffSet, ALimit: integer): TFDQuery;
-    function RadicalResearch(AValue: string; AFields: array of TFields)
+    function RadicalResearch(AValue: string; AFields: array of TField)
       : TFDQuery;
     function Delete(AField: TField; AValue: Int64): TFDQuery;
     function FindById(AField: TField; AValue: Int64): TFDQuery;
     function UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject)
       : TFDQuery;
     function New(ABody: TJSONObject): TFDQuery;
-    function Open: TFDQuery;
+    function OpenUp: TFDQuery;
     function StartCriteria: TFDQuery;
     function EndCriteria: TFDQuery;
     function ToJson(out AJSON: TJSONArray): TFDQuery; overload;
     function ToJson(out AJSON: TJSONObject): TFDQuery; overload;
     function FromJson(const AJSON: TJSONObject): TFDQuery;
+    function Where(AField: string): TFDQuery; overload;
     function Where(AField: TField): TFDQuery; overload;
     function Where(AValue: Boolean): TFDQuery; overload;
     function &Or(AField: TField): TFDQuery;
@@ -148,13 +149,13 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Open: TFDQuery;
+function TRagnaHelper.OpenUp: TFDQuery;
 var
   LRagna: TRagna;
 begin
   LRagna := TRagna.Create(Self);
   try
-    LRagna.Open;
+    LRagna.OpenUp;
   finally
     LRagna.Free;
   end;
@@ -204,7 +205,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.RadicalResearch(AValue: string; AFields: array of TFields)
+function TRagnaHelper.RadicalResearch(AValue: string; AFields: array of TField)
   : TFDQuery;
 var
   LRagna: TRagna;
@@ -276,9 +277,32 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Where(AValue: Boolean): TFDQuery;
+function TRagnaHelper.Where(AField: string): TFDQuery;
+var
+  LRagna: TRagna;
 begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.Criteria.Where(AField);
+  finally
+    LRagna.Free;
+  end;
 
+  Result := Self;
+end;
+
+function TRagnaHelper.Where(AValue: Boolean): TFDQuery;
+var
+  LRagna: TRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.Criteria.Where(AValue);
+  finally
+    LRagna.Free;
+  end;
+
+  Result := Self;
 end;
 
 function TRagnaHelper.Where(AField: TField): TFDQuery;

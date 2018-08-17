@@ -14,15 +14,17 @@ type
     FCriteria: ICriteria;
   private
     function GetTableName: string;
+    function HasField(AFields: array of TField): Boolean;
     procedure OpenEmpty;
+    procedure RaiseNotFound;
   public
     procedure Paginate(AOffSet, ALimit: integer);
-    procedure RadicalResearch(AValue: string; AFields: array of TFields);
+    procedure RadicalResearch(AValue: string; AFields: array of TField);
     procedure Delete(AField: TField; AValue: Int64);
     procedure FindById(AField: TField; AValue: Int64);
     procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
     procedure New(ABody: TJSONObject);
-    procedure Open;
+    procedure OpenUp;
     procedure StartCriteria;
     procedure EndCriteria;
     procedure ToJson(out AJSON: TJSONArray); overload;
@@ -56,10 +58,10 @@ var
   LSql: string;
 begin
   OpenEmpty;
-  LSql := Format(DELETE_SQL, [GetTableName, AField.Origin]);
+  LSql := Format(DELETE_SQL, [GetTableName, AField.FieldName]);
   LDeleted := FQuery.Connection.ExecSQL(LSql, [AValue]);
   if not DELETED[LDeleted] then
-    raise Exception.Create('resource not found');
+    RaiseNotFound;
 end;
 
 destructor TRagna.Destroy;
@@ -78,9 +80,19 @@ begin
 end;
 
 procedure TRagna.FindById(AField: TField; AValue: Int64);
+var
+  LField: string;
 begin
+  FQuery.StartCriteria;
+  try
+    OpenEmpty;
+    LField := GetTableName + '.' + AField.Origin;
+  finally
+    FQuery.EndCriteria;
+  end;
+
   FQuery
-    .Where(AField)
+    .Where(LField)
     .Equals(AValue);
 end;
 
@@ -90,25 +102,23 @@ begin
 end;
 
 function TRagna.GetTableName: string;
-const
-  NOT_FOUND_ID = -1;
-  NOT_EQUALS_VALUE_ID = '0';
 begin
-  FindById(NOT_FOUND_ID, NOT_EQUALS_VALUE_ID);
   Result := FQuery.Table.Table.SourceName;
 end;
 
-procedure TRagna.Open;
+function TRagna.HasField(AFields: array of TField): Boolean;
+begin
+  Result := Length(AFields) > 0;
+end;
+
+procedure TRagna.OpenUp;
 begin
   FQuery.Open;
 end;
 
 procedure TRagna.OpenEmpty;
 begin
-  FQuery
-    .Where(True)
-    .Equals(False)
-    .Open;
+  FQuery.Where(True).Equals(False).OpenUp;
 end;
 
 procedure TRagna.Paginate(AOffSet, ALimit: integer);
@@ -123,13 +133,37 @@ end;
 procedure TRagna.New(ABody: TJSONObject);
 begin
   OpenEmpty;
-  FQuery
-    .FromJson(ABody);
+  FQuery.FromJson(ABody);
 end;
 
-procedure TRagna.RadicalResearch(AValue: string; AFields: array of TFields);
+procedure TRagna.RadicalResearch(AValue: string; AFields: array of TField);
+var
+  LSearch: string;
+  LCount: integer;
 begin
+  if HasField(AFields) and not AValue.IsEmpty then
+  begin
+    LSearch := '%' + AValue + '%';
+    
+    FQuery
+      .Where(AFields[0])
+      .Like(LSearch);
 
+    if ((Length(AFields) - 1) >= 2) then
+    begin
+      for LCount := 1 to Length(AFields) - 1 do
+      begin
+        FQuery
+          .&Or(AFields[LCount])
+          .Like(LSearch);
+      end;
+    end;
+  end;
+end;
+
+procedure TRagna.RaiseNotFound;
+begin
+  raise Exception.Create('Resource not found!');
 end;
 
 procedure TRagna.StartCriteria;
@@ -147,9 +181,9 @@ end;
 procedure TRagna.ToJson(out AJSON: TJSONObject);
 begin
   if FQuery.IsEmpty then
-    AJSON := TJSONObject.Create
-  else
-    AJSON := FQuery.AsJSONObject;
+    RaiseNotFound;
+
+  AJSON := FQuery.AsJSONObject;
 end;
 
 procedure TRagna.ToJson(out AJSON: TJSONArray);
@@ -164,7 +198,7 @@ procedure TRagna.UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
 begin
   FQuery
     .FindById(AField, AValue)
-    .Open
+    .OpenUp
     .FromJson(ABody);
 end;
 
