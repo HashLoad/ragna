@@ -159,6 +159,8 @@ begin
   case AnsiIndexStr(AQuery.Connection.DriverName, ['PG']) of
     0:
       LCriteria := TPGCriteria.Create(AQuery);
+    else
+      raise Exception.Create('Driver not suported');
   end;
 
   Result := LCriteria;
