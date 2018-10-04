@@ -8,6 +8,6 @@
 	"supported": "xe+",
 	"dprojFile": "",
 	"dependencies": {
-		"github.com/hunsche/DataSetConverter4Delphi": "^1"
+		"github.com/hunsche/DataSetConverter4Delphi": "^1.0.0"
 	}
 }
