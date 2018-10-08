@@ -168,10 +168,10 @@ end;
 
 procedure TRagna.StartCriteria;
 var
-  LKey: Pointer;
+  LKey: TFDQuery;
   LRagnaState: TRagnaState;
 begin
-  LKey := @FQuery;
+  LKey := FQuery;
   LRagnaState := TRagnaState.GetInstance;
 
   if LRagnaState.GetState(LKey).IsEmpty then

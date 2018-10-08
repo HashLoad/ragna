@@ -3,21 +3,22 @@ unit Ragna.State;
 interface
 
 uses
-  System.Generics.Collections;
+  System.Generics.Collections, FireDac.Comp.Client;
 
 type
+
+  TPairOfQueryAndSql = TPair<TFDQuery,string>;
 
   TRagnaState = class
   private
     FSecret: string;
-    FStates: TThreadList<TPair<Pointer, string>>;
+    FStates: TThreadList<TPairOfQueryAndSql>;
     class var FInstance: TRagnaState;
   public
-    property States: TThreadList < TPair < Pointer, string >> read FStates
-      write FStates;
-    procedure SetState(APointer: Pointer; ASQL: string);
-    function GetState(APointer: Pointer): string;
-    function RemoveState(APointer: Pointer): string;
+    property States: TThreadList<TPairOfQueryAndSql> read FStates write FStates;
+    procedure SetState(AQuery: TFDQuery; ASQL: string);
+    function GetState(AQuery: TFDQuery): string;
+    function RemoveState(AQuery: TFDQuery): string;
     class function GetInstance: TRagnaState;
     class procedure Release;
     constructor Create;
@@ -30,7 +31,7 @@ implementation
 
 constructor TRagnaState.Create;
 begin
-  FStates := TThreadList < TPair < Pointer, string >>.Create;
+  FStates := TThreadList<TPairOfQueryAndSql>.Create;
 end;
 
 destructor TRagnaState.Destroy;
@@ -45,16 +46,16 @@ begin
   Result := FInstance;
 end;
 
-function TRagnaState.GetState(APointer: Pointer): string;
+function TRagnaState.GetState(AQuery: TFDQuery): string;
 var
-  LState: TPair<Pointer, string>;
-  LStates: TList<TPair<Pointer, string>>;
+  LState: TPairOfQueryAndSql;
+  LStates: TList<TPairOfQueryAndSql>;
 begin
   LStates := FStates.LockList;
   try
     for LState in LStates do
     begin
-      if LState.Key = APointer then
+      if LState.Key = AQuery then
       begin
         Result := LState.Value;
         Break;
@@ -70,16 +71,16 @@ begin
   FInstance.Free;
 end;
 
-function TRagnaState.RemoveState(APointer: Pointer): string;
+function TRagnaState.RemoveState(AQuery: TFDQuery): string;
 var
-  LState: TPair<Pointer, string>;
-  LStates: TList<TPair<Pointer, string>>;
+  LState: TPairOfQueryAndSql;
+  LStates: TList<TPairOfQueryAndSql>;
 begin
   LStates := FStates.LockList;
   try
     for LState in LStates do
     begin
-      if LState.Key = APointer then
+      if LState.Key = AQuery then
       begin
         Result := LState.Value;
         Break;
@@ -92,18 +93,11 @@ begin
   LStates.Remove(LState);
 end;
 
-procedure TRagnaState.SetState(APointer: Pointer; ASQL: string);
+procedure TRagnaState.SetState(AQuery: TFDQuery; ASQL: string);
 var
-  LState: TPair<Pointer, string>;
+  LState: TPairOfQueryAndSql;
 begin
-//  TMonitor.Enter(FList);
-  try
-//    FList.Add();
-  finally
-//    TMonitor.Exit(FList);
-  end;
-
-  LState := TPair<Pointer, string>.Create(APointer, ASQL);
+  LState := TPairOfQueryAndSql.Create(AQuery, ASQL);
   FStates.Add(LState);
 end;
 
