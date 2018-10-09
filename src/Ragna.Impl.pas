@@ -1,217 +1,104 @@
-unit Ragna.Impl;
+unit Ragna.State;
 
 interface
 
-uses Ragna.Intf, FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Criteria,
-  DataSetConverter4D.Helper;
+uses
+  System.Generics.Collections, FireDac.Comp.Client, System.Rtti;
 
 type
 
-  TRagna = class(TInterfacedObject, IRagna)
+  TListQueryAndSql = TDictionary<TFDQuery, string>;
+
+  TRagnaState = class
   private
-    FQuery: TFDQuery;
-    FManagerCriteria: TManagerCriteria;
-    FCriteria: ICriteria;
-    procedure SaveState;
-  private
-    function GetTableName: string;
-    function HasField(AFields: array of TField): Boolean;
-    procedure OpenEmpty;
-    procedure RaiseNotFound;
+    FSecret: string;
+    FStates: TListQueryAndSql;
+    FVmi : TVirtualMethodInterceptor;
+    class var FInstance: TRagnaState;
+    procedure OnBeforVMI(Instance: TObject;
+    Method: TRttiMethod; const Args: TArray<TValue>; out DoInvoke: Boolean;
+    out Result: TValue);
   public
-    procedure Paginate(AOffSet, ALimit: integer);
-    procedure RadicalResearch(AValue: string; AFields: array of TField);
-    procedure Delete(AField: TField; AValue: Int64);
-    procedure FindById(AField: TField; AValue: Int64);
-    procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
-    procedure New(ABody: TJSONObject);
-    procedure OpenUp;
-    procedure StartCriteria; deprecated;
-    procedure EndCriteria; deprecated;
-    procedure Reset;
-    procedure ToJson(out AJSON: TJSONArray); overload;
-    procedure ToJson(out AJSON: TJSONObject); overload;
-    procedure EditFromJson(const AJSON: TJSONObject);
-    constructor Create(AQuery: TFDQuery);
+    property States: TListQueryAndSql read FStates write FStates;
+    procedure SetState(AQuery: TFDQuery; ASQL: string);
+    function GetState(AQuery: TFDQuery; out ASQL: string): Boolean;
+    class function GetInstance: TRagnaState;
+    class procedure Release;
+    constructor Create;
     destructor Destroy;
-    property Query: TFDQuery read FQuery write FQuery;
-    property Criteria: ICriteria read FCriteria write FCriteria;
   end;
 
 implementation
 
-{ TRagna }
 
-uses Ragna.State, System.SysUtils, Ragna;
+{ TRagnaState }
 
-constructor TRagna.Create(AQuery: TFDQuery);
+constructor TRagnaState.Create;
 begin
-  FQuery := AQuery;
-  SaveState;
-  FManagerCriteria := TManagerCriteria.Create(FQuery);
-  FCriteria := FManagerCriteria.Criteria;
+  FVmi := TVirtualMethodInterceptor.Create(TFDQuery);
+  FVmi.OnBefore := OnBeforVMI;
+  FStates := TListQueryAndSql.Create;
 end;
 
-procedure TRagna.Delete(AField: TField; AValue: Int64);
-const
-  DELETE_SQL = 'DELETE FROM %s WHERE %s = :ID';
-  DELETED: array [0 .. 1] of Boolean = (False, True);
-var
-  LDeleted: integer;
-  LSql: string;
+destructor TRagnaState.Destroy;
 begin
-  OpenEmpty;
-  LSql := Format(DELETE_SQL, [GetTableName, AField.FieldName]);
-  LDeleted := FQuery.Connection.ExecSQL(LSql, [AValue]);
-  if not DELETED[LDeleted] then
-    RaiseNotFound;
+  FStates.Free;
+  FVmi.Free;
 end;
 
-destructor TRagna.Destroy;
+class function TRagnaState.GetInstance: TRagnaState;
 begin
-  FManagerCriteria.Free;
+  if not assigned(FInstance) then
+    FInstance := TRagnaState.Create;
+  Result := FInstance;
 end;
 
-procedure TRagna.SaveState;
-var
-  LKey: TFDQuery;
-  LRagnaState: TRagnaState;
+function TRagnaState.GetState(AQuery: TFDQuery; out ASQL: string): Boolean;
 begin
-  LKey := FQuery;
-  LRagnaState := TRagnaState.GetInstance;
-  if LRagnaState.GetState(LKey).IsEmpty then
-    LRagnaState.SetState(LKey, FQuery.SQL.Text);
-end;
-
-procedure TRagna.EndCriteria;
-begin
-  Reset;
-end;
-
-procedure TRagna.FindById(AField: TField; AValue: Int64);
-var
-  LField: string;
-begin
-  FQuery.StartCriteria;
+  TMonitor.Enter(FStates);
   try
-    OpenEmpty;
-    LField := GetTableName + '.' + AField.Origin;
+    Result := FStates.TryGetValue(AQuery, ASQL);
   finally
-    FQuery.EndCriteria;
-  end;
-
-  FQuery
-    .Where(LField)
-    .Equals(AValue);
-end;
-
-procedure TRagna.EditFromJson(const AJSON: TJSONObject);
-begin
-  FQuery.RecordFromJSONObject(AJSON);
-end;
-
-function TRagna.GetTableName: string;
-begin
-  Result := FQuery.Table.Table.SourceName;
-end;
-
-function TRagna.HasField(AFields: array of TField): Boolean;
-begin
-  Result := Length(AFields) > 0;
-end;
-
-procedure TRagna.OpenUp;
-begin
-  FQuery.Open;
-end;
-
-procedure TRagna.OpenEmpty;
-begin
-  FQuery.Where(True).Equals(False).OpenUp;
-end;
-
-procedure TRagna.Paginate(AOffSet, ALimit: integer);
-begin
-  if AOffSet > 0 then
-    FQuery.FetchOptions.RecsSkip := AOffSet;
-
-  if ALimit > 0 then
-    FQuery.FetchOptions.RecsMax := ALimit;
-end;
-
-procedure TRagna.New(ABody: TJSONObject);
-begin
-  OpenEmpty;
-  FQuery.EditFromJson(ABody);
-end;
-
-procedure TRagna.RadicalResearch(AValue: string; AFields: array of TField);
-var
-  LSearch: string;
-  LCount: integer;
-begin
-  if HasField(AFields) and not AValue.IsEmpty then
-  begin
-    LSearch := '%' + AValue + '%';
-    
-    FQuery
-      .Where(AFields[0])
-      .Like(LSearch);
-
-    if ((Length(AFields) - 1) >= 2) then
-    begin
-      for LCount := 1 to Length(AFields) - 1 do
-      begin
-        FQuery
-          .&Or(AFields[LCount])
-          .Like(LSearch);
-      end;
-    end;
+    TMonitor.Exit(FStates);
   end;
 end;
 
-procedure TRagna.RaiseNotFound;
+procedure TRagnaState.OnBeforVMI(Instance: TObject; Method: TRttiMethod;
+  const Args: TArray<TValue>; out DoInvoke: Boolean; out Result: TValue);
 begin
-  raise Exception.Create('Resource not found!');
+  if Method.Name <> 'BeforeDestruction' then
+    Exit;
+  TMonitor.Enter(FStates);
+  try
+    FStates.Remove(Instance as TFDQuery);
+  finally
+    TMonitor.Exit(FStates);
+  end;
 end;
 
-procedure TRagna.Reset;
-var
-  LKey: Pointer;
-  LRagnaState: TRagnaState;
+class procedure TRagnaState.Release;
 begin
-  LKey := FQuery;
-  LRagnaState := TRagnaState.GetInstance;
-  FQuery.SQL.Text := LRagnaState.GetState(LKey);
+  FInstance.Free;
 end;
 
-procedure TRagna.StartCriteria;
+procedure TRagnaState.SetState(AQuery: TFDQuery; ASQL: string);
 begin
-//  SaveState;
+  TMonitor.Enter(FStates);
+  try
+    if FVmi.ProxyClass <> AQuery.ClassType then
+      FVmi.Proxify(AQuery);
+    FStates.AddOrSetValue(AQuery, ASQL);
+  finally
+    TMonitor.Exit(FStates);
+  end;
 end;
 
-procedure TRagna.ToJson(out AJSON: TJSONObject);
-begin
-  if FQuery.IsEmpty then
-    RaiseNotFound;
+initialization
 
-  AJSON := FQuery.AsJSONObject;
-end;
+TRagnaState.GetInstance;
 
-procedure TRagna.ToJson(out AJSON: TJSONArray);
-begin
-  if FQuery.IsEmpty then
-    AJSON := TJSONArray.Create
-  else
-    AJSON := FQuery.AsJSONArray;
-end;
+finalization
 
-procedure TRagna.UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
-begin
-  FQuery
-    .FindById(AField, AValue)
-    .OpenUp
-    .EditFromJson(ABody);
-end;
+TRagnaState.Release;
 
 end.
