@@ -71,10 +71,10 @@ end;
 
 procedure TRagna.EndCriteria;
 var
-  LKey: Pointer;
+  LKey: TFDQuery;
   LRagnaState: TRagnaState;
 begin
-  LKey := @FQuery;
+  LKey := FQuery;
   LRagnaState := TRagnaState.GetInstance;
   FQuery.SQL.Text := LRagnaState.RemoveState(LKey);
 end;
