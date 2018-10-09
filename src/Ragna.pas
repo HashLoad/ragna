@@ -18,8 +18,9 @@ type
       : TFDQuery;
     function New(ABody: TJSONObject): TFDQuery;
     function OpenUp: TFDQuery;
-    function StartCriteria: TFDQuery;
-    function EndCriteria: TFDQuery;
+    function StartCriteria: TFDQuery; deprecated;
+    function EndCriteria: TFDQuery; deprecated;
+    function Reset: TFDQuery;
     function ToJson(out AJSON: TJSONArray): TFDQuery; overload;
     function ToJson(out AJSON: TJSONObject): TFDQuery; overload;
     function EditFromJson(const AJSON: TJSONObject): TFDQuery;
@@ -258,6 +259,20 @@ begin
   LRagna := TRagna.Create(Self);
   try
     LRagna.RadicalResearch(AValue, AFields);
+  finally
+    LRagna.Free;
+  end;
+
+  Result := Self;
+end;
+
+function TRagnaHelper.Reset: TFDQuery;
+var
+  LRagna: TRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.Reset;
   finally
     LRagna.Free;
   end;

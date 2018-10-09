@@ -7,7 +7,7 @@ uses
 
 type
 
-  TPairOfQueryAndSql = TPair<TFDQuery,string>;
+  TPairOfQueryAndSql = TPair<TFDQuery, string>;
 
   TRagnaState = class
   private
@@ -18,7 +18,7 @@ type
     property States: TThreadList<TPairOfQueryAndSql> read FStates write FStates;
     procedure SetState(AQuery: TFDQuery; ASQL: string);
     function GetState(AQuery: TFDQuery): string;
-    function RemoveState(AQuery: TFDQuery): string;
+    function RemoveState(AQuery: TFDQuery): string; deprecated;
     class function GetInstance: TRagnaState;
     class procedure Release;
     constructor Create;

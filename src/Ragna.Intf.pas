@@ -16,8 +16,9 @@ type
     procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
     procedure New(ABody: TJSONObject);
     procedure OpenUp;
-    procedure StartCriteria;
-    procedure EndCriteria;
+    procedure StartCriteria; deprecated;
+    procedure EndCriteria; deprecated;
+    procedure Reset;
     procedure ToJson(out AJSON: TJSONArray); overload;
     procedure ToJson(out AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONObject);

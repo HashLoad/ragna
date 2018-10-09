@@ -12,6 +12,7 @@ type
     FQuery: TFDQuery;
     FManagerCriteria: TManagerCriteria;
     FCriteria: ICriteria;
+    procedure SaveState;
   private
     function GetTableName: string;
     function HasField(AFields: array of TField): Boolean;
@@ -25,8 +26,9 @@ type
     procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
     procedure New(ABody: TJSONObject);
     procedure OpenUp;
-    procedure StartCriteria;
-    procedure EndCriteria;
+    procedure StartCriteria; deprecated;
+    procedure EndCriteria; deprecated;
+    procedure Reset;
     procedure ToJson(out AJSON: TJSONArray); overload;
     procedure ToJson(out AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONObject);
@@ -45,6 +47,7 @@ uses Ragna.State, System.SysUtils, Ragna;
 constructor TRagna.Create(AQuery: TFDQuery);
 begin
   FQuery := AQuery;
+  SaveState;
   FManagerCriteria := TManagerCriteria.Create(FQuery);
   FCriteria := FManagerCriteria.Criteria;
 end;
@@ -69,14 +72,20 @@ begin
   FManagerCriteria.Free;
 end;
 
-procedure TRagna.EndCriteria;
+procedure TRagna.SaveState;
 var
   LKey: TFDQuery;
   LRagnaState: TRagnaState;
 begin
   LKey := FQuery;
   LRagnaState := TRagnaState.GetInstance;
-  FQuery.SQL.Text := LRagnaState.RemoveState(LKey);
+  if LRagnaState.GetState(LKey).IsEmpty then
+    LRagnaState.SetState(LKey, FQuery.SQL.Text);
+end;
+
+procedure TRagna.EndCriteria;
+begin
+  Reset;
 end;
 
 procedure TRagna.FindById(AField: TField; AValue: Int64);
@@ -166,16 +175,19 @@ begin
   raise Exception.Create('Resource not found!');
 end;
 
-procedure TRagna.StartCriteria;
+procedure TRagna.Reset;
 var
-  LKey: TFDQuery;
+  LKey: Pointer;
   LRagnaState: TRagnaState;
 begin
   LKey := FQuery;
   LRagnaState := TRagnaState.GetInstance;
+  FQuery.SQL.Text := LRagnaState.GetState(LKey);
+end;
 
-  if LRagnaState.GetState(LKey).IsEmpty then
-    LRagnaState.SetState(LKey, FQuery.SQL.Text)
+procedure TRagna.StartCriteria;
+begin
+//  SaveState;
 end;
 
 procedure TRagna.ToJson(out AJSON: TJSONObject);
