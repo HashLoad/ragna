@@ -34,6 +34,7 @@ type
   TManagerCriteria = class
   private
     FCriteria: ICriteria;
+    function GetDrive(AQuery: TFDQuery): string;
     function GetInstanceCriteria(AQuery: TFDQuery): ICriteria;
   public
     constructor Create(AQuery: TFDQuery);
@@ -43,7 +44,8 @@ type
 
 implementation
 
-uses SysUtils;
+uses
+  FireDAC.Stan.Intf, SysUtils;
 
 { TPGCriteria }
 
@@ -150,13 +152,25 @@ begin
   inherited;
 end;
 
+function TManagerCriteria.GetDrive(AQuery: TFDQuery): string;
+var
+  LDef: IFDStanConnectionDef;
+begin
+  Result := AQuery.Connection.DriverName;
+  if Result.IsEmpty and not AQuery.Connection.ConnectionDefName.IsEmpty then
+  begin
+    LDef := FDManager.ConnectionDefs.FindConnectionDef(AQuery.Connection.ConnectionDefName);
+    Result := LDef.Params.DriverID;
+  end;
+end;
+
 function TManagerCriteria.GetInstanceCriteria(AQuery: TFDQuery): ICriteria;
 var
   LCriteria: ICriteria;
 begin
   LCriteria := nil;
 
-  case AnsiIndexStr(AQuery.Connection.DriverName, ['PG']) of
+  case AnsiIndexStr(GetDrive(AQuery), ['PG']) of
     0:
       LCriteria := TPGCriteria.Create(AQuery);
     else
