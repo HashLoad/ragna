@@ -19,13 +19,13 @@ type
     Method: TRttiMethod; const Args: TArray<TValue>; out DoInvoke: Boolean;
     out Result: TValue);
   public
+    destructor Destroy; override;
     property States: TListQueryAndSql read FStates write FStates;
     procedure SetState(AQuery: TFDQuery; ASQL: string);
     function GetState(AQuery: TFDQuery; out ASQL: string): Boolean;
     class function GetInstance: TRagnaState;
     class procedure Release;
     constructor Create;
-    destructor Destroy;
   end;
 
 implementation
