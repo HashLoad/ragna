@@ -33,7 +33,7 @@ type
     procedure ToJson(out AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONObject);
     constructor Create(AQuery: TFDQuery);
-    destructor Destroy;
+    destructor Destroy; Override;
     property Query: TFDQuery read FQuery write FQuery;
     property Criteria: ICriteria read FCriteria write FCriteria;
   end;
