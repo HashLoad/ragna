@@ -68,7 +68,7 @@
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <SanitizedProjectName>ragna</SanitizedProjectName>
-        <DCC_UnitSearchPath>;C:\Users\hunsc\projects\hashload\ragna\modules\DataSetConverter4Delphi\src\;C:\Users\hunsc\projects\hashload\ragna\modules\DataSetConverter4Delphi\unittest\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\Users\hunsc\projects\hashload\ragna\modules\DataSetConverter4Delphi\src\;C:\Users\hunsc\projects\hashload\ragna\modules\DataSetConverter4Delphi\unittest\;$(DCC_UnitSearchPath);modules\.dcp;modules\.dcu;modules;modules\DataSetConverter4Delphi\src;modules\DataSetConverter4Delphi\unittest</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <DCC_CBuilderOutput>None</DCC_CBuilderOutput>
@@ -113,16 +113,16 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="dbrtl.dcp"/>
-        <DCCReference Include="FireDAC.dcp"/>
-        <DCCReference Include="FireDACCommonDriver.dcp"/>
-        <DCCReference Include="FireDACCommon.dcp"/>
-        <DCCReference Include="src\Ragna.Criteria.pas"/>
-        <DCCReference Include="src\Ragna.Impl.pas"/>
-        <DCCReference Include="src\Ragna.Intf.pas"/>
-        <DCCReference Include="src\Ragna.pas"/>
-        <DCCReference Include="src\Ragna.State.pas"/>
+        <DCCReference Include="rtl.dcp"></DCCReference>
+        <DCCReference Include="dbrtl.dcp"></DCCReference>
+        <DCCReference Include="FireDAC.dcp"></DCCReference>
+        <DCCReference Include="FireDACCommonDriver.dcp"></DCCReference>
+        <DCCReference Include="FireDACCommon.dcp"></DCCReference>
+        <DCCReference Include="src\Ragna.Criteria.pas"></DCCReference>
+        <DCCReference Include="src\Ragna.Impl.pas"></DCCReference>
+        <DCCReference Include="src\Ragna.Intf.pas"></DCCReference>
+        <DCCReference Include="src\Ragna.pas"></DCCReference>
+        <DCCReference Include="src\Ragna.State.pas"></DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -450,9 +450,9 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectiOSDeviceResourceRules"/>
-                <DeployClass Name="ProjectiOSEntitlements"/>
-                <DeployClass Name="ProjectiOSInfoPList"/>
+                <DeployClass Name="ProjectiOSDeviceResourceRules"></DeployClass>
+                <DeployClass Name="ProjectiOSEntitlements"></DeployClass>
+                <DeployClass Name="ProjectiOSInfoPList"></DeployClass>
                 <DeployClass Name="ProjectiOSResource">
                     <Platform Name="iOSDevice32">
                         <Operation>1</Operation>
@@ -464,8 +464,8 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectOSXEntitlements"/>
-                <DeployClass Name="ProjectOSXInfoPList"/>
+                <DeployClass Name="ProjectOSXEntitlements"></DeployClass>
+                <DeployClass Name="ProjectOSXInfoPList"></DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
                         <RemoteDir>Contents\Resources</RemoteDir>
@@ -524,14 +524,14 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"></ProjectRoot>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"></ProjectRoot>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"></ProjectRoot>
+                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"></ProjectRoot>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"></ProjectRoot>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"></ProjectRoot>
+                <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"></ProjectRoot>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"></ProjectRoot>
             </Deployment>
             <Platforms>
                 <Platform value="Android">False</Platform>
@@ -545,7 +545,7 @@
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
     </ProjectExtensions>
-    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
-    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
-    <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"></Import>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"></Import>
+    <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"></Import>
 </Project>

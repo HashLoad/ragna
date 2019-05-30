@@ -34,6 +34,7 @@ type
     function Like(AValue: string): TFDQuery;
     function &Equals(AValue: Int64): TFDQuery; overload;
     function &Equals(AValue: Boolean): TFDQuery; overload;
+    function &Equals(AValue: String): TFDQuery; overload;
     function Order(AField: TField): TFDQuery;
   end;
 
@@ -118,6 +119,20 @@ begin
   LRagna := TRagna.Create(Self);
   try
     LRagna.EndCriteria;
+  finally
+    LRagna.Free;
+  end;
+
+  Result := Self;
+end;
+
+function TRagnaHelper.Equals(AValue: String): TFDQuery;
+var
+  LRagna: TRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.Criteria.Equals(AValue);
   finally
     LRagna.Free;
   end;

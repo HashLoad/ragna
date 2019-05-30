@@ -27,6 +27,7 @@ type
     procedure Like(AValue: string);
     procedure &Equals(AValue: Int64); overload;
     procedure &Equals(AValue: Boolean); overload;
+    procedure &Equals(AValue: string); overload;
     procedure Order(AField: TField);
     constructor Create(AQuery: TFDQuery);
   end;
@@ -73,6 +74,13 @@ end;
 constructor TPGCriteria.Create(AQuery: TFDQuery);
 begin
   FQuery := AQuery;
+end;
+
+procedure TPGCriteria.Equals(AValue: string);
+const
+  PHRASE = '%s %s';
+begin
+  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], AValue]));
 end;
 
 procedure TPGCriteria.Equals(AValue: Int64);

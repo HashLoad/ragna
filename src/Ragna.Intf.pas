@@ -36,6 +36,7 @@ type
     procedure Like(AValue: string);
     procedure &Equals(AValue: Int64); overload;
     procedure &Equals(AValue: Boolean); overload;
+    procedure &Equals(AValue: string); overload;
     procedure Order(AField: TField);
   end;
 
