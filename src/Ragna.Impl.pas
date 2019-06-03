@@ -24,14 +24,16 @@ type
     procedure Delete(AField: TField; AValue: Int64);
     procedure FindById(AField: TField; AValue: Int64);
     procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
-    procedure New(ABody: TJSONObject);
+    procedure New(ABody: TJSONObject); overload;
+    procedure New(ABody: TJSONArray); overload;
     procedure OpenUp;
     procedure StartCriteria; deprecated;
     procedure EndCriteria; deprecated;
     procedure Reset;
     procedure ToJson(out AJSON: TJSONArray); overload;
     procedure ToJson(out AJSON: TJSONObject); overload;
-    procedure EditFromJson(const AJSON: TJSONObject);
+    procedure EditFromJson(const AJSON: TJSONObject); overload;
+    procedure EditFromJson(const AJSON: TJSONArray); overload;
     constructor Create(AQuery: TFDQuery);
     destructor Destroy; Override;
     property Query: TFDQuery read FQuery write FQuery;
@@ -84,6 +86,11 @@ begin
     LRagnaState.SetState(LKey, FQuery.SQL.Text);
 end;
 
+procedure TRagna.EditFromJson(const AJSON: TJSONArray);
+begin
+  FQuery.FromJSONArray(AJSON);
+end;
+
 procedure TRagna.EndCriteria;
 begin
   Reset;
@@ -104,7 +111,7 @@ end;
 
 procedure TRagna.EditFromJson(const AJSON: TJSONObject);
 begin
-    FQuery.RecordFromJSONObject(AJSON);
+  FQuery.RecordFromJSONObject(AJSON);
 end;
 
 function TRagna.GetTableName: string;
@@ -115,6 +122,12 @@ end;
 function TRagna.HasField(AFields: array of TField): Boolean;
 begin
   Result := Length(AFields) > 0;
+end;
+
+procedure TRagna.New(ABody: TJSONArray);
+begin
+  OpenEmpty;
+  FQuery.EditFromJson(ABody);
 end;
 
 procedure TRagna.OpenUp;

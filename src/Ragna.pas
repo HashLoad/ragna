@@ -16,14 +16,16 @@ type
     function FindById(AField: TField; AValue: Int64): TFDQuery;
     function UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject)
       : TFDQuery;
-    function New(ABody: TJSONObject): TFDQuery;
+    function New(ABody: TJSONObject): TFDQuery; overload;
+    function New(ABody: TJSONArray): TFDQuery; overload;
     function OpenUp: TFDQuery;
     function StartCriteria: TFDQuery; deprecated;
     function EndCriteria: TFDQuery; deprecated;
     function Reset: TFDQuery;
     function ToJson(out AJSON: TJSONArray): TFDQuery; overload;
     function ToJson(out AJSON: TJSONObject): TFDQuery; overload;
-    function EditFromJson(const AJSON: TJSONObject): TFDQuery;
+    function EditFromJson(const AJSON: TJSONObject): TFDQuery; overload;
+    function EditFromJson(const AJSON: TJSONArray): TFDQuery; overload;
     function Where(AField: string): TFDQuery; overload;
     function Where(AField: TField): TFDQuery; overload;
     function Where(AValue: Boolean): TFDQuery; overload;
@@ -105,6 +107,20 @@ begin
   LRagna := TRagna.Create(Self);
   try
     LRagna.Delete(AField, AValue);
+  finally
+    LRagna.Free;
+  end;
+
+  Result := Self;
+end;
+
+function TRagnaHelper.EditFromJson(const AJSON: TJSONArray): TFDQuery;
+var
+  LRagna: TRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.EditFromJson(AJSON);
   finally
     LRagna.Free;
   end;
@@ -203,6 +219,20 @@ begin
   LRagna := TRagna.Create(Self);
   try
     LRagna.Criteria.Like(AValue);
+  finally
+    LRagna.Free;
+  end;
+
+  Result := Self;
+end;
+
+function TRagnaHelper.New(ABody: TJSONArray): TFDQuery;
+var
+  LRagna: TRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.New(ABody);
   finally
     LRagna.Free;
   end;

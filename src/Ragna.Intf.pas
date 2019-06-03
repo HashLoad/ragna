@@ -14,7 +14,8 @@ type
     procedure Delete(AField: TField; AValue: Int64);
     procedure FindById(AField: TField; AValue: Int64);
     procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
-    procedure New(ABody: TJSONObject);
+    procedure New(ABody: TJSONObject); overload;
+    procedure New(ABody: TJSONArray); overload;
     procedure OpenUp;
     procedure StartCriteria; deprecated;
     procedure EndCriteria; deprecated;
