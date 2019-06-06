@@ -137,7 +137,10 @@ end;
 
 procedure TRagna.OpenEmpty;
 begin
-  FQuery.Where(True).Equals(False).OpenUp;
+  FQuery
+    .Where('1')
+    .Equals('2')
+    .OpenUp;
 end;
 
 procedure TRagna.Paginate(AOffSet, ALimit: integer);
