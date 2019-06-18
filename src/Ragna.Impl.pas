@@ -21,7 +21,7 @@ type
   public
     procedure Paginate(AOffSet, ALimit: integer);
     procedure RadicalResearch(AValue: string; AFields: array of TField);
-    procedure Delete(AField: TField; AValue: Int64);
+    procedure Remove(AField: TField; AValue: Int64);
     procedure FindById(AField: TField; AValue: Int64);
     procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
     procedure New(ABody: TJSONObject);
@@ -52,7 +52,7 @@ begin
   FCriteria := FManagerCriteria.Criteria;
 end;
 
-procedure TRagna.Delete(AField: TField; AValue: Int64);
+procedure TRagna.Remove(AField: TField; AValue: Int64);
 const
   DELETE_SQL = 'DELETE FROM %s WHERE %s = :ID';
   DELETED: array [0 .. 1] of Boolean = (False, True);

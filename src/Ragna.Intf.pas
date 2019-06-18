@@ -11,7 +11,7 @@ type
     ['{0F1AD1E9-A82C-44BE-9208-685B9C3C77F9}']
     procedure Paginate(AOffSet, ALimit: integer);
     procedure RadicalResearch(AValue: string; AFields: array of TField);
-    procedure Delete(AField: TField; AValue: Int64);
+    procedure Remove(AField: TField; AValue: Int64);
     procedure FindById(AField: TField; AValue: Int64);
     procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
     procedure New(ABody: TJSONObject);

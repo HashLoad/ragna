@@ -1,0 +1,18 @@
+{
+	"hash": "b14e6a77427d10f868e9622e3b2074b0",
+	"updated": "2019-06-18T01:31:24.020281-03:00",
+	"installedModules": {
+		"github.com/hunsche/datasetconverter4delphi": {
+			"name": "DataSetConverter4Delphi",
+			"version": "1.0.0",
+			"hash": "50a600ddef6362a35c7b4e4a872f2312",
+			"artifacts": {
+				"bin": [],
+				"dcp": [],
+				"dcu": [],
+				"bpl": []
+			},
+			"failed": false
+		}
+	}
+}

@@ -12,7 +12,7 @@ type
     function Paginate(AOffSet, ALimit: integer): TFDQuery;
     function RadicalResearch(AValue: string; AFields: array of TField)
       : TFDQuery;
-    function Delete(AField: TField; AValue: Int64): TFDQuery;
+    function Remove(AField: TField; AValue: Int64): TFDQuery;
     function FindById(AField: TField; AValue: Int64): TFDQuery;
     function UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject)
       : TFDQuery;
@@ -97,13 +97,13 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Delete(AField: TField; AValue: Int64): TFDQuery;
+function TRagnaHelper.Remove(AField: TField; AValue: Int64): TFDQuery;
 var
   LRagna: TRagna;
 begin
   LRagna := TRagna.Create(Self);
   try
-    LRagna.Delete(AField, AValue);
+    LRagna.Remove(AField, AValue);
   finally
     LRagna.Free;
   end;
