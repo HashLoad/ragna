@@ -14,7 +14,8 @@ type
     procedure Remove(AField: TField; AValue: Int64);
     procedure FindById(AField: TField; AValue: Int64);
     procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
-    procedure New(ABody: TJSONObject);
+    procedure New(ABody: TJSONObject); overload;
+    procedure New(ABody: TJSONArray); overload;
     procedure OpenUp;
     procedure StartCriteria; deprecated;
     procedure EndCriteria; deprecated;
@@ -36,6 +37,7 @@ type
     procedure Like(AValue: string);
     procedure &Equals(AValue: Int64); overload;
     procedure &Equals(AValue: Boolean); overload;
+    procedure &Equals(AValue: string); overload;
     procedure Order(AField: TField);
   end;
 

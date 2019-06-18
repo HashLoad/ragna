@@ -10,10 +10,10 @@ type
 
   TOperatorType = (otWhere, otOr, otLike, otEquals, otOrder, otAnd);
 
-  TPGCriteria = class(TInterfacedObject, ICriteria)
+  TDefaultCriteria = class(TInterfacedObject, ICriteria)
   const
-    OPERATORS: array [low(TOperatorType) .. High(TOperatorType)
-      ] of string = ('WHERE', 'OR', 'LIKE', '=', 'ORDER BY', 'AND');
+    OPERATORS: array [low(TOperatorType) .. High(TOperatorType)] of string = ('WHERE', 'OR', 'LIKE', '=',
+      'ORDER BY', 'AND');
   private
     FQuery: TFDQuery;
   public
@@ -27,6 +27,7 @@ type
     procedure Like(AValue: string);
     procedure &Equals(AValue: Int64); overload;
     procedure &Equals(AValue: Boolean); overload;
+    procedure &Equals(AValue: string); overload;
     procedure Order(AField: TField);
     constructor Create(AQuery: TFDQuery);
   end;
@@ -47,57 +48,63 @@ implementation
 uses
   FireDAC.Stan.Intf, SysUtils;
 
-{ TPGCriteria }
+{ TDefaultCriteria }
 
-procedure TPGCriteria.&And(AField: string);
+procedure TDefaultCriteria.&And(AField: string);
 const
   PHRASE = ' %s %s';
 begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otAnd], AField]));
 end;
 
-procedure TPGCriteria.&And(AField: TField);
+procedure TDefaultCriteria.&And(AField: TField);
 const
   PHRASE = ' %s %s';
 begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otAnd], AField.Origin]));
 end;
 
-procedure TPGCriteria.&Or(AField: string);
+procedure TDefaultCriteria.&Or(AField: string);
 const
   PHRASE = ' %s %s';
 begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otOr], AField]));
 end;
 
-constructor TPGCriteria.Create(AQuery: TFDQuery);
+constructor TDefaultCriteria.Create(AQuery: TFDQuery);
 begin
   FQuery := AQuery;
 end;
 
-procedure TPGCriteria.Equals(AValue: Int64);
+procedure TDefaultCriteria.Equals(AValue: string);
+const
+  PHRASE = '%s ''%s''';
+begin
+  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], AValue]));
+end;
+
+procedure TDefaultCriteria.Equals(AValue: Int64);
 const
   PHRASE = '%s %d';
 begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], AValue]));
 end;
 
-procedure TPGCriteria.Where(AField: TField);
+procedure TDefaultCriteria.Where(AField: TField);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otWhere], AField.Origin]));
 end;
 
-procedure TPGCriteria.Equals(AValue: Boolean);
+procedure TDefaultCriteria.Equals(AValue: Boolean);
 const
   PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], BoolToStr(AValue,
-    True)]));
+  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], BoolToStr(AValue, True)]));
 end;
 
-procedure TPGCriteria.Like(AValue: string);
+procedure TDefaultCriteria.Like(AValue: string);
 const
   PHRASE = '::text %s %s';
 var
@@ -105,35 +112,34 @@ var
   LParam: TFDParam;
 begin
   LKeyParam := THashMD5.Create.HashAsString;
-  FQuery.SQL.Text := FQuery.SQL.Text +
-    format(PHRASE, [OPERATORS[otLike], ':' + LKeyParam]);
+  FQuery.SQL.Text := FQuery.SQL.Text + format(PHRASE, [OPERATORS[otLike], ':' + LKeyParam]);
   LParam := FQuery.ParamByName(LKeyParam);
   LParam.DataType := ftString;
   LParam.Value := AValue;
 end;
 
-procedure TPGCriteria.Order(AField: TField);
+procedure TDefaultCriteria.Order(AField: TField);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otOrder], AField.Origin]));
 end;
 
-procedure TPGCriteria.Where(AField: string);
+procedure TDefaultCriteria.Where(AField: string);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otWhere], AField]));
 end;
 
-procedure TPGCriteria.Where(AValue: Boolean);
+procedure TDefaultCriteria.Where(AValue: Boolean);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otWhere], BoolToStr(AValue, True)]));
 end;
 
-procedure TPGCriteria.&Or(AField: TField);
+procedure TDefaultCriteria.&Or(AField: TField);
 const
   PHRASE = ' %s %s';
 begin
@@ -172,9 +178,9 @@ begin
 
   case AnsiIndexStr(GetDrive(AQuery), ['PG']) of
     0:
-      LCriteria := TPGCriteria.Create(AQuery);
-    else
-      raise Exception.Create('Driver not suported');
+      LCriteria := TDefaultCriteria.Create(AQuery);
+  else
+      LCriteria := TDefaultCriteria.Create(AQuery);
   end;
 
   Result := LCriteria;
