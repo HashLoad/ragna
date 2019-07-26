@@ -6,6 +6,6 @@
 	"mainsrc": "src/",
 	"projects": [],
 	"dependencies": {
-		"github.com/hunsche/DataSetConverter4Delphi": "^1.0.0"
+		"github.com/hunsche/DataSetConverter4Delphi": "^2.0.0"
 	}
 }

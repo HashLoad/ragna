@@ -2,8 +2,7 @@ unit Ragna.Impl;
 
 interface
 
-uses Ragna.Intf, FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Criteria,
-  DataSetConverter4D.Helper;
+uses Ragna.Intf, FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Criteria;
 
 type
 
@@ -44,7 +43,7 @@ implementation
 
 { TRagna }
 
-uses Ragna.State, System.SysUtils, Ragna;
+uses Ragna.State, System.SysUtils, Ragna, DataSetConverter4D;
 
 constructor TRagna.Create(AQuery: TFDQuery);
 begin
