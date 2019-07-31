@@ -12,8 +12,7 @@ type
 
   TDefaultCriteria = class(TInterfacedObject, ICriteria)
   const
-    OPERATORS: array [low(TOperatorType) .. High(TOperatorType)] of string = ('WHERE', 'OR', 'LIKE', '=',
-      'ORDER BY', 'AND');
+    OPERATORS: array [low(TOperatorType) .. High(TOperatorType)] of string = ('WHERE', 'OR', 'LIKE', '=', 'ORDER BY', 'AND');
   private
     FQuery: TFDQuery;
   public
@@ -166,6 +165,8 @@ begin
   if Result.IsEmpty and not AQuery.Connection.ConnectionDefName.IsEmpty then
   begin
     LDef := FDManager.ConnectionDefs.FindConnectionDef(AQuery.Connection.ConnectionDefName);
+    if LDef = nil then
+      raise Exception.Create('ConnectionDefs "' + AQuery.Connection.ConnectionDefName + '" not found');
     Result := LDef.Params.DriverID;
   end;
 end;
@@ -180,7 +181,7 @@ begin
     0:
       LCriteria := TDefaultCriteria.Create(AQuery);
   else
-      LCriteria := TDefaultCriteria.Create(AQuery);
+    LCriteria := TDefaultCriteria.Create(AQuery);
   end;
 
   Result := LCriteria;
