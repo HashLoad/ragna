@@ -16,7 +16,6 @@ type
     procedure New(const ABody: TJSONArray); overload;
     procedure OpenUp;
     procedure OpenEmpty;
-    procedure EndCriteria; deprecated;
     procedure Reset;
     procedure ToJson(out AJSON: TJSONArray); overload;
     procedure ToJson(out AJSON: TJSONObject); overload;

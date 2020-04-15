@@ -7,7 +7,7 @@ uses FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Impl, Ragna.Criteria.Impl;
 type
   TRagnaHelper = class helper for TFDQuery
   public
-    function Paginate(const AOffSet, ALimit: integer): TFDQuery;
+    function Paginate(const AOffSet, ALimit: Integer): TFDQuery;
     function RadicalResearch(const AValue: string; const AFields: array of TField): TFDQuery;
     function Remove(const AField: TField; const AValue: Int64): TFDQuery;
     function FindById(const AField: TField; const AValue: Int64): TFDQuery;
@@ -16,7 +16,6 @@ type
     function New(const ABody: TJSONArray): TFDQuery; overload;
     function OpenUp: TFDQuery;
     function OpenEmpty: TFDQuery;
-    function EndCriteria: TFDQuery; deprecated;
     function Reset: TFDQuery;
     function ToJson(out AJSON: TJSONArray): TFDQuery; overload;
     function ToJson(out AJSON: TJSONObject): TFDQuery; overload;
@@ -112,19 +111,6 @@ begin
   LRagna := TRagna.Create(Self);
   try
     LRagna.EditFromJson(AJSON);
-  finally
-    LRagna.Free;
-  end;
-  Result := Self;
-end;
-
-function TRagnaHelper.EndCriteria: TFDQuery;
-var
-  LRagna: TRagna;
-begin
-  LRagna := TRagna.Create(Self);
-  try
-    LRagna.EndCriteria;
   finally
     LRagna.Free;
   end;
@@ -261,7 +247,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Paginate(const AOffSet, ALimit: integer): TFDQuery;
+function TRagnaHelper.Paginate(const AOffSet, ALimit: Integer): TFDQuery;
 var
   LRagna: TRagna;
 begin

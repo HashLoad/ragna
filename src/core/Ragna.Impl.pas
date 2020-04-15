@@ -16,7 +16,7 @@ type
     function HasField(const AFields: array of TField): Boolean;
     procedure RaiseNotFound;
   public
-    procedure Paginate(const AOffSet, ALimit: integer);
+    procedure Paginate(const AOffSet, ALimit: Integer);
     procedure RadicalResearch(const AValue: string; const AFields: array of TField);
     procedure Remove(const AField: TField; const AValue: Int64);
     procedure FindById(const AField: TField; const AValue: Int64);
@@ -25,7 +25,6 @@ type
     procedure New(const ABody: TJSONArray); overload;
     procedure OpenUp;
     procedure OpenEmpty;
-    procedure EndCriteria; deprecated;
     procedure Reset;
     procedure ToJson(out AJSON: TJSONArray); overload;
     procedure ToJson(out AJSON: TJSONObject); overload;
@@ -54,7 +53,7 @@ const
   DELETE_SQL = 'DELETE FROM %s WHERE %s = :ID';
   DELETED: array [0 .. 1] of Boolean = (False, True);
 var
-  LDeleted: integer;
+  LDeleted: Integer;
   LSql: string;
 begin
   OpenEmpty;
@@ -71,24 +70,15 @@ end;
 
 procedure TRagna.SaveState;
 var
-  LKey: TFDQuery;
   LSql: string;
-  LRagnaState: TRagnaState;
 begin
-  LKey := FQuery;
-  LRagnaState := TRagnaState.GetInstance;
-  if not LRagnaState.GetState(LKey, LSql) then
-    LRagnaState.SetState(LKey, FQuery.SQL.Text);
+  if not TRagnaState.GetInstance.GetState(FQuery, LSql) then
+    TRagnaState.GetInstance.SetState(FQuery, FQuery.SQL.Text);
 end;
 
 procedure TRagna.EditFromJson(const AJSON: TJSONArray);
 begin
   FQuery.LoadFromJSON(AJSON);
-end;
-
-procedure TRagna.EndCriteria;
-begin
-  Reset;
 end;
 
 procedure TRagna.FindById(const AField: TField; const AValue: Int64);
@@ -131,7 +121,7 @@ begin
   FQuery.Where('1').Equals('2').OpenUp;
 end;
 
-procedure TRagna.Paginate(const AOffSet, ALimit: integer);
+procedure TRagna.Paginate(const AOffSet, ALimit: Integer);
 begin
   if AOffSet > 0 then
     FQuery.FetchOptions.RecsSkip := AOffSet;
@@ -148,7 +138,7 @@ end;
 procedure TRagna.RadicalResearch(const AValue: string; const AFields: array of TField);
 var
   LSearch: string;
-  LCount: integer;
+  LCount: Integer;
 begin
   if HasField(AFields) and not AValue.IsEmpty then
   begin
@@ -169,13 +159,9 @@ end;
 
 procedure TRagna.Reset;
 var
-  LKey: TFDQuery;
   LSql: string;
-  LRagnaState: TRagnaState;
 begin
-  LKey := FQuery;
-  LRagnaState := TRagnaState.GetInstance;
-  LRagnaState.GetState(LKey, LSql);
+  TRagnaState.GetInstance.GetState(FQuery, LSql);
   FQuery.SQL.Text := LSql;
 end;
 
