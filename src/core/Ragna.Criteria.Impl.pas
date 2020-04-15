@@ -47,10 +47,8 @@ begin
 end;
 
 procedure TDefaultCriteria.&And(const AField: TField);
-const
-  PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(Format(PHRASE, [otAnd.ToString, AField.Origin]));
+  Self.And(AField.Origin);
 end;
 
 procedure TDefaultCriteria.&Or(const AField: string);
@@ -80,10 +78,8 @@ begin
 end;
 
 procedure TDefaultCriteria.Where(const AField: TField);
-const
-  PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(Format(PHRASE, [otWhere.ToString, AField.Origin]));
+  Self.Where(AField.Origin);
 end;
 
 procedure TDefaultCriteria.Equals(const AValue: Boolean);
@@ -108,10 +104,8 @@ begin
 end;
 
 procedure TDefaultCriteria.Order(const AField: TField);
-const
-  PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(Format(PHRASE, [otOrder.ToString, AField.Origin]));
+  Self.Order(AField.Origin);
 end;
 
 procedure TDefaultCriteria.Where(const AField: string);
@@ -122,17 +116,13 @@ begin
 end;
 
 procedure TDefaultCriteria.Where(const AValue: Boolean);
-const
-  PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(Format(PHRASE, [otWhere.ToString, BoolToStr(AValue, True)]));
+  Self.Where(BoolToStr(AValue, True));
 end;
 
 procedure TDefaultCriteria.&Or(const AField: TField);
-const
-  PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(Format(PHRASE, [otOr.ToString, AField.Origin]));
+  Self.Or(AField.Origin);
 end;
 
 procedure TDefaultCriteria.Order(const AField: string);
