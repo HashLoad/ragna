@@ -2,22 +2,18 @@ unit Ragna.State;
 
 interface
 
-uses
-  System.Generics.Collections, FireDac.Comp.Client, System.Rtti;
+uses System.Generics.Collections, FireDac.Comp.Client, System.Rtti;
 
 type
-
   TListQueryAndSql = TDictionary<TFDQuery, string>;
 
   TRagnaState = class
   private
-    FSecret: string;
     FStates: TListQueryAndSql;
-    FVmi : TVirtualMethodInterceptor;
+    FVmi: TVirtualMethodInterceptor;
     class var FInstance: TRagnaState;
-    procedure OnBeforVMI(Instance: TObject;
-    Method: TRttiMethod; const Args: TArray<TValue>; out DoInvoke: Boolean;
-    out Result: TValue);
+    procedure OnBeforVMI(Instance: TObject; Method: TRttiMethod; const Args: TArray<TValue>; out DoInvoke: Boolean;
+      out Result: TValue);
   public
     destructor Destroy; override;
     property States: TListQueryAndSql read FStates write FStates;
@@ -29,9 +25,6 @@ type
   end;
 
 implementation
-
-
-{ TRagnaState }
 
 constructor TRagnaState.Create;
 begin
@@ -63,8 +56,8 @@ begin
   end;
 end;
 
-procedure TRagnaState.OnBeforVMI(Instance: TObject; Method: TRttiMethod;
-  const Args: TArray<TValue>; out DoInvoke: Boolean; out Result: TValue);
+procedure TRagnaState.OnBeforVMI(Instance: TObject; Method: TRttiMethod; const Args: TArray<TValue>; out DoInvoke: Boolean;
+  out Result: TValue);
 begin
   if Method.Name <> 'BeforeDestruction' then
     Exit;
@@ -94,11 +87,9 @@ begin
 end;
 
 initialization
-
-TRagnaState.GetInstance;
+  TRagnaState.GetInstance;
 
 finalization
-
-TRagnaState.Release;
+  TRagnaState.Release;
 
 end.

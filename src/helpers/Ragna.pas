@@ -2,20 +2,16 @@ unit Ragna;
 
 interface
 
-uses
-  FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Impl;
+uses FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Impl, Ragna.Criteria.Impl;
 
 type
-
   TRagnaHelper = class helper for TFDQuery
   public
     function Paginate(AOffSet, ALimit: integer): TFDQuery;
-    function RadicalResearch(AValue: string; AFields: array of TField)
-      : TFDQuery;
+    function RadicalResearch(AValue: string; AFields: array of TField): TFDQuery;
     function Remove(AField: TField; AValue: Int64): TFDQuery;
     function FindById(AField: TField; AValue: Int64): TFDQuery;
-    function UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject)
-      : TFDQuery;
+    function UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject): TFDQuery;
     function New(ABody: TJSONObject): TFDQuery; overload;
     function New(ABody: TJSONArray): TFDQuery; overload;
     function OpenUp: TFDQuery;
@@ -36,7 +32,7 @@ type
     function Like(AValue: string): TFDQuery;
     function &Equals(AValue: Int64): TFDQuery; overload;
     function &Equals(AValue: Boolean): TFDQuery; overload;
-    function &Equals(AValue: String): TFDQuery; overload;
+    function &Equals(AValue: string): TFDQuery; overload;
     function Order(AField: TField): TFDQuery;
   end;
 
@@ -54,7 +50,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -68,7 +63,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -82,7 +76,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -96,7 +89,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -110,7 +102,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -124,7 +115,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -138,11 +128,10 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
-function TRagnaHelper.Equals(AValue: String): TFDQuery;
+function TRagnaHelper.Equals(AValue: string): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -152,7 +141,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -166,7 +154,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -180,7 +167,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -194,7 +180,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -208,7 +193,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -222,7 +206,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -236,7 +219,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -250,7 +232,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -264,7 +245,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -278,7 +258,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -292,12 +271,10 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
-function TRagnaHelper.RadicalResearch(AValue: string; AFields: array of TField)
-  : TFDQuery;
+function TRagnaHelper.RadicalResearch(AValue: string; AFields: array of TField): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -307,7 +284,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -321,7 +297,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -335,7 +310,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -349,7 +323,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -363,12 +336,10 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
-function TRagnaHelper.UpdateById(AField: TField; AValue: Int64;
-  ABody: TJSONObject): TFDQuery;
+function TRagnaHelper.UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -378,7 +349,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -392,7 +362,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -406,7 +375,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 
@@ -420,7 +388,6 @@ begin
   finally
     LRagna.Free;
   end;
-
   Result := Self;
 end;
 

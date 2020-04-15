@@ -3,9 +3,9 @@
 	"description": "",
 	"version": "1.0.0",
 	"homepage": "",
-	"mainsrc": "src/",
+	"mainsrc": "src",
 	"projects": [],
 	"dependencies": {
-		"github.com/hunsche/DataSetConverter4Delphi": "^2.0.0"
+		"github.com/viniciussanchez/dataset-serialize": "^v2.0.3"
 	}
 }

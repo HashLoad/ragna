@@ -1,18 +1,15 @@
-unit Ragna.Criteria;
-
+unit Ragna.Criteria.Impl;
+
 interface
 
-uses
-  FireDAC.Comp.Client, StrUtils, Ragna.Intf, Data.DB, FireDAC.Stan.Param,
-  System.Hash;
+uses FireDAC.Comp.Client, StrUtils, Data.DB, FireDAC.Stan.Param, System.Hash, Ragna.Criteria.Intf;
 
 type
-
   TOperatorType = (otWhere, otOr, otLike, otEquals, otOrder, otAnd);
 
   TDefaultCriteria = class(TInterfacedObject, ICriteria)
   const
-    OPERATORS: array [low(TOperatorType) .. High(TOperatorType)] of string = ('WHERE', 'OR', 'LIKE', '=', 'ORDER BY', 'AND');
+    OPERATORS: array [low(TOperatorType) .. high(TOperatorType)] of string = ('WHERE', 'OR', 'LIKE', '=', 'ORDER BY', 'AND');
   private
     FQuery: TFDQuery;
   public
@@ -38,16 +35,12 @@ type
     function GetInstanceCriteria(AQuery: TFDQuery): ICriteria;
   public
     constructor Create(AQuery: TFDQuery);
-    destructor Destroy; override;
     property Criteria: ICriteria read FCriteria write FCriteria;
   end;
 
 implementation
 
-uses
-  FireDAC.Stan.Intf, SysUtils;
-
-{ TDefaultCriteria }
+uses FireDAC.Stan.Intf, SysUtils;
 
 procedure TDefaultCriteria.&And(AField: string);
 const
@@ -145,16 +138,9 @@ begin
   FQuery.SQL.Add(format(PHRASE, [OPERATORS[otOr], AField.Origin]));
 end;
 
-{ TCriteria }
-
 constructor TManagerCriteria.Create(AQuery: TFDQuery);
 begin
   FCriteria := GetInstanceCriteria(AQuery);
-end;
-
-destructor TManagerCriteria.Destroy;
-begin
-  inherited;
 end;
 
 function TManagerCriteria.GetDrive(AQuery: TFDQuery): string;
@@ -172,19 +158,14 @@ begin
 end;
 
 function TManagerCriteria.GetInstanceCriteria(AQuery: TFDQuery): ICriteria;
-var
-  LCriteria: ICriteria;
 begin
-  LCriteria := nil;
-
   case AnsiIndexStr(GetDrive(AQuery), ['PG']) of
     0:
-      LCriteria := TDefaultCriteria.Create(AQuery);
-  else
-    LCriteria := TDefaultCriteria.Create(AQuery);
+      Result := TDefaultCriteria.Create(AQuery);
+    else
+      Result := TDefaultCriteria.Create(AQuery);
   end;
-
-  Result := LCriteria;
 end;
 
 end.
+

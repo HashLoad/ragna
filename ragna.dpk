@@ -36,11 +36,11 @@ requires
   FireDACCommon;
 
 contains
-  Ragna.Criteria in 'src\Ragna.Criteria.pas',
-  Ragna.Impl in 'src\Ragna.Impl.pas',
-  Ragna.Intf in 'src\Ragna.Intf.pas',
-  Ragna in 'src\Ragna.pas',
-  Ragna.State in 'src\Ragna.State.pas';
+  Ragna.Intf in 'src\interfaces\Ragna.Intf.pas',
+  Ragna.Criteria.Intf in 'src\interfaces\Ragna.Criteria.Intf.pas',
+  Ragna.Criteria.Impl in 'src\core\Ragna.Criteria.Impl.pas',
+  Ragna.Impl in 'src\core\Ragna.Impl.pas',
+  Ragna in 'src\helpers\Ragna.pas',
+  Ragna.State in 'src\state\Ragna.State.pas';
 
 end.
-
