@@ -25,7 +25,6 @@ type
     procedure New(const ABody: TJSONArray); overload;
     procedure OpenUp;
     procedure OpenEmpty;
-    procedure StartCriteria; deprecated;
     procedure EndCriteria; deprecated;
     procedure Reset;
     procedure ToJson(out AJSON: TJSONArray); overload;
@@ -178,11 +177,6 @@ begin
   LRagnaState := TRagnaState.GetInstance;
   LRagnaState.GetState(LKey, LSql);
   FQuery.SQL.Text := LSql;
-end;
-
-procedure TRagna.StartCriteria;
-begin
-//  SaveState;
 end;
 
 procedure TRagna.ToJson(out AJSON: TJSONObject);

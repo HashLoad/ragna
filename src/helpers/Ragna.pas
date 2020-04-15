@@ -16,7 +16,6 @@ type
     function New(const ABody: TJSONArray): TFDQuery; overload;
     function OpenUp: TFDQuery;
     function OpenEmpty: TFDQuery;
-    function StartCriteria: TFDQuery; deprecated;
     function EndCriteria: TFDQuery; deprecated;
     function Reset: TFDQuery;
     function ToJson(out AJSON: TJSONArray): TFDQuery; overload;
@@ -308,19 +307,6 @@ begin
   LRagna := TRagna.Create(Self);
   try
     LRagna.Reset;
-  finally
-    LRagna.Free;
-  end;
-  Result := Self;
-end;
-
-function TRagnaHelper.StartCriteria: TFDQuery;
-var
-  LRagna: TRagna;
-begin
-  LRagna := TRagna.Create(Self);
-  try
-    LRagna.StartCriteria;
   finally
     LRagna.Free;
   end;
