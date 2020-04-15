@@ -2,14 +2,10 @@ unit Ragna.Criteria.Impl;
 
 interface
 
-uses FireDAC.Comp.Client, StrUtils, Data.DB, FireDAC.Stan.Param, System.Hash, Ragna.Criteria.Intf;
+uses FireDAC.Comp.Client, StrUtils, Data.DB, FireDAC.Stan.Param, System.Hash, Ragna.Criteria.Intf, Ragna.Types;
 
 type
-  TOperatorType = (otWhere, otOr, otLike, otEquals, otOrder, otAnd);
-
   TDefaultCriteria = class(TInterfacedObject, ICriteria)
-  const
-    OPERATORS: array [low(TOperatorType) .. high(TOperatorType)] of string = ('WHERE', 'OR', 'LIKE', '=', 'ORDER BY', 'AND');
   private
     FQuery: TFDQuery;
   public
@@ -46,21 +42,21 @@ procedure TDefaultCriteria.&And(AField: string);
 const
   PHRASE = ' %s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otAnd], AField]));
+  FQuery.SQL.Add(Format(PHRASE, [otAnd.ToString, AField]));
 end;
 
 procedure TDefaultCriteria.&And(AField: TField);
 const
   PHRASE = ' %s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otAnd], AField.Origin]));
+  FQuery.SQL.Add(Format(PHRASE, [otAnd.ToString, AField.Origin]));
 end;
 
 procedure TDefaultCriteria.&Or(AField: string);
 const
   PHRASE = ' %s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otOr], AField]));
+  FQuery.SQL.Add(Format(PHRASE, [otOr.ToString, AField]));
 end;
 
 constructor TDefaultCriteria.Create(AQuery: TFDQuery);
@@ -72,28 +68,28 @@ procedure TDefaultCriteria.Equals(AValue: string);
 const
   PHRASE = '%s ''%s''';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], AValue]));
+  FQuery.SQL.Add(Format(PHRASE, [otEquals.ToString, AValue]));
 end;
 
 procedure TDefaultCriteria.Equals(AValue: Int64);
 const
   PHRASE = '%s %d';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], AValue]));
+  FQuery.SQL.Add(Format(PHRASE, [otEquals.ToString, AValue]));
 end;
 
 procedure TDefaultCriteria.Where(AField: TField);
 const
   PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otWhere], AField.Origin]));
+  FQuery.SQL.Add(Format(PHRASE, [otWhere.ToString, AField.Origin]));
 end;
 
 procedure TDefaultCriteria.Equals(AValue: Boolean);
 const
   PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otEquals], BoolToStr(AValue, True)]));
+  FQuery.SQL.Add(Format(PHRASE, [otEquals.ToString, BoolToStr(AValue, True)]));
 end;
 
 procedure TDefaultCriteria.Like(AValue: string);
@@ -104,7 +100,7 @@ var
   LParam: TFDParam;
 begin
   LKeyParam := THashMD5.Create.HashAsString;
-  FQuery.SQL.Text := FQuery.SQL.Text + format(PHRASE, [OPERATORS[otLike], ':' + LKeyParam]);
+  FQuery.SQL.Text := FQuery.SQL.Text + Format(PHRASE, [otLike.ToString, ':' + LKeyParam]);
   LParam := FQuery.ParamByName(LKeyParam);
   LParam.DataType := ftString;
   LParam.Value := AValue;
@@ -114,28 +110,28 @@ procedure TDefaultCriteria.Order(AField: TField);
 const
   PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otOrder], AField.Origin]));
+  FQuery.SQL.Add(Format(PHRASE, [otOrder.ToString, AField.Origin]));
 end;
 
 procedure TDefaultCriteria.Where(AField: string);
 const
   PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otWhere], AField]));
+  FQuery.SQL.Add(Format(PHRASE, [otWhere.ToString, AField]));
 end;
 
 procedure TDefaultCriteria.Where(AValue: Boolean);
 const
   PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otWhere], BoolToStr(AValue, True)]));
+  FQuery.SQL.Add(Format(PHRASE, [otWhere.ToString, BoolToStr(AValue, True)]));
 end;
 
 procedure TDefaultCriteria.&Or(AField: TField);
 const
   PHRASE = ' %s %s';
 begin
-  FQuery.SQL.Add(format(PHRASE, [OPERATORS[otOr], AField.Origin]));
+  FQuery.SQL.Add(Format(PHRASE, [otOr.ToString, AField.Origin]));
 end;
 
 constructor TManagerCriteria.Create(AQuery: TFDQuery);

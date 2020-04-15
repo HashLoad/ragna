@@ -41,6 +41,7 @@ contains
   Ragna.Criteria.Impl in 'src\core\Ragna.Criteria.Impl.pas',
   Ragna.Impl in 'src\core\Ragna.Impl.pas',
   Ragna in 'src\helpers\Ragna.pas',
-  Ragna.State in 'src\state\Ragna.State.pas';
+  Ragna.State in 'src\state\Ragna.State.pas',
+  Ragna.Types in 'src\types\Ragna.Types.pas';
 
 end.
