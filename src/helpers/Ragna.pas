@@ -7,13 +7,13 @@ uses FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Impl, Ragna.Criteria.Impl;
 type
   TRagnaHelper = class helper for TFDQuery
   public
-    function Paginate(AOffSet, ALimit: integer): TFDQuery;
-    function RadicalResearch(AValue: string; AFields: array of TField): TFDQuery;
-    function Remove(AField: TField; AValue: Int64): TFDQuery;
-    function FindById(AField: TField; AValue: Int64): TFDQuery;
-    function UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject): TFDQuery;
-    function New(ABody: TJSONObject): TFDQuery; overload;
-    function New(ABody: TJSONArray): TFDQuery; overload;
+    function Paginate(const AOffSet, ALimit: integer): TFDQuery;
+    function RadicalResearch(const AValue: string; const AFields: array of TField): TFDQuery;
+    function Remove(const AField: TField; const AValue: Int64): TFDQuery;
+    function FindById(const AField: TField; const AValue: Int64): TFDQuery;
+    function UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject): TFDQuery;
+    function New(const ABody: TJSONObject): TFDQuery; overload;
+    function New(const ABody: TJSONArray): TFDQuery; overload;
     function OpenUp: TFDQuery;
     function OpenEmpty: TFDQuery;
     function StartCriteria: TFDQuery; deprecated;
@@ -23,25 +23,25 @@ type
     function ToJson(out AJSON: TJSONObject): TFDQuery; overload;
     function EditFromJson(const AJSON: TJSONObject): TFDQuery; overload;
     function EditFromJson(const AJSON: TJSONArray): TFDQuery; overload;
-    function Where(AField: string): TFDQuery; overload;
-    function Where(AField: TField): TFDQuery; overload;
-    function Where(AValue: Boolean): TFDQuery; overload;
-    function &Or(AField: TField): TFDQuery; overload;
-    function &Or(AField: string): TFDQuery; overload;
-    function &And(AField: TField): TFDQuery; overload;
-    function &And(AField: string): TFDQuery; overload;
-    function Like(AValue: string): TFDQuery;
-    function &Equals(AValue: Int64): TFDQuery; overload;
-    function &Equals(AValue: Boolean): TFDQuery; overload;
-    function &Equals(AValue: string): TFDQuery; overload;
-    function Order(AField: TField): TFDQuery;
+    function Where(const AField: string): TFDQuery; overload;
+    function Where(const AField: TField): TFDQuery; overload;
+    function Where(const AValue: Boolean): TFDQuery; overload;
+    function &Or(const AField: TField): TFDQuery; overload;
+    function &Or(const AField: string): TFDQuery; overload;
+    function &And(const AField: TField): TFDQuery; overload;
+    function &And(const AField: string): TFDQuery; overload;
+    function Like(const AValue: string): TFDQuery;
+    function &Equals(const AValue: Int64): TFDQuery; overload;
+    function &Equals(const AValue: Boolean): TFDQuery; overload;
+    function &Equals(const AValue: string): TFDQuery; overload;
+    function Order(const AField: TField): TFDQuery;
   end;
 
 implementation
 
 uses System.SysUtils;
 
-function TRagnaHelper.&Or(AField: TField): TFDQuery;
+function TRagnaHelper.&Or(const AField: TField): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -54,7 +54,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.&And(AField: TField): TFDQuery;
+function TRagnaHelper.&And(const AField: TField): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -67,7 +67,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.&And(AField: string): TFDQuery;
+function TRagnaHelper.&And(const AField: string): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -80,7 +80,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.&Or(AField: string): TFDQuery;
+function TRagnaHelper.&Or(const AField: string): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -93,7 +93,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Remove(AField: TField; AValue: Int64): TFDQuery;
+function TRagnaHelper.Remove(const AField: TField; const AValue: Int64): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -132,7 +132,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Equals(AValue: string): TFDQuery;
+function TRagnaHelper.Equals(const AValue: string): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -145,7 +145,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Equals(AValue: Boolean): TFDQuery;
+function TRagnaHelper.Equals(const AValue: Boolean): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -158,7 +158,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Equals(AValue: Int64): TFDQuery;
+function TRagnaHelper.Equals(const AValue: Int64): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -171,7 +171,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.FindById(AField: TField; AValue: Int64): TFDQuery;
+function TRagnaHelper.FindById(const AField: TField; const AValue: Int64): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -197,7 +197,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Like(AValue: string): TFDQuery;
+function TRagnaHelper.Like(const AValue: string): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -210,7 +210,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.New(ABody: TJSONArray): TFDQuery;
+function TRagnaHelper.New(const ABody: TJSONArray): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -249,7 +249,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Order(AField: TField): TFDQuery;
+function TRagnaHelper.Order(const AField: TField): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -262,7 +262,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Paginate(AOffSet, ALimit: integer): TFDQuery;
+function TRagnaHelper.Paginate(const AOffSet, ALimit: integer): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -275,7 +275,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.New(ABody: TJSONObject): TFDQuery;
+function TRagnaHelper.New(const ABody: TJSONObject): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -288,7 +288,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.RadicalResearch(AValue: string; AFields: array of TField): TFDQuery;
+function TRagnaHelper.RadicalResearch(const AValue: string; const AFields: array of TField): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -353,7 +353,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject): TFDQuery;
+function TRagnaHelper.UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -366,7 +366,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Where(AField: string): TFDQuery;
+function TRagnaHelper.Where(const AField: string): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -379,7 +379,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Where(AValue: Boolean): TFDQuery;
+function TRagnaHelper.Where(const AValue: Boolean): TFDQuery;
 var
   LRagna: TRagna;
 begin
@@ -392,7 +392,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Where(AField: TField): TFDQuery;
+function TRagnaHelper.Where(const AField: TField): TFDQuery;
 var
   LRagna: TRagna;
 begin

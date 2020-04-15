@@ -9,28 +9,28 @@ type
   private
     FQuery: TFDQuery;
   public
-    procedure Where(AField: string); overload;
-    procedure Where(AField: TField); overload;
-    procedure Where(AValue: Boolean); overload;
-    procedure &Or(AField: string); overload;
-    procedure &Or(AField: TField); overload;
-    procedure &And(AField: string); overload;
-    procedure &And(AField: TField); overload;
-    procedure Like(AValue: string);
-    procedure &Equals(AValue: Int64); overload;
-    procedure &Equals(AValue: Boolean); overload;
-    procedure &Equals(AValue: string); overload;
-    procedure Order(AField: TField);
-    constructor Create(AQuery: TFDQuery);
+    procedure Where(const AField: string); overload;
+    procedure Where(const AField: TField); overload;
+    procedure Where(const AValue: Boolean); overload;
+    procedure &Or(const AField: string); overload;
+    procedure &Or(const AField: TField); overload;
+    procedure &And(const AField: string); overload;
+    procedure &And(const AField: TField); overload;
+    procedure Like(const AValue: string);
+    procedure &Equals(const AValue: Int64); overload;
+    procedure &Equals(const AValue: Boolean); overload;
+    procedure &Equals(const AValue: string); overload;
+    procedure Order(const AField: TField);
+    constructor Create(const AQuery: TFDQuery);
   end;
 
   TManagerCriteria = class
   private
     FCriteria: ICriteria;
-    function GetDrive(AQuery: TFDQuery): string;
-    function GetInstanceCriteria(AQuery: TFDQuery): ICriteria;
+    function GetDrive(const AQuery: TFDQuery): string;
+    function GetInstanceCriteria(const AQuery: TFDQuery): ICriteria;
   public
-    constructor Create(AQuery: TFDQuery);
+    constructor Create(const AQuery: TFDQuery);
     property Criteria: ICriteria read FCriteria write FCriteria;
   end;
 
@@ -38,61 +38,61 @@ implementation
 
 uses FireDAC.Stan.Intf, SysUtils;
 
-procedure TDefaultCriteria.&And(AField: string);
+procedure TDefaultCriteria.&And(const AField: string);
 const
   PHRASE = ' %s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otAnd.ToString, AField]));
 end;
 
-procedure TDefaultCriteria.&And(AField: TField);
+procedure TDefaultCriteria.&And(const AField: TField);
 const
   PHRASE = ' %s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otAnd.ToString, AField.Origin]));
 end;
 
-procedure TDefaultCriteria.&Or(AField: string);
+procedure TDefaultCriteria.&Or(const AField: string);
 const
   PHRASE = ' %s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otOr.ToString, AField]));
 end;
 
-constructor TDefaultCriteria.Create(AQuery: TFDQuery);
+constructor TDefaultCriteria.Create(const AQuery: TFDQuery);
 begin
   FQuery := AQuery;
 end;
 
-procedure TDefaultCriteria.Equals(AValue: string);
+procedure TDefaultCriteria.Equals(const AValue: string);
 const
   PHRASE = '%s ''%s''';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otEquals.ToString, AValue]));
 end;
 
-procedure TDefaultCriteria.Equals(AValue: Int64);
+procedure TDefaultCriteria.Equals(const AValue: Int64);
 const
   PHRASE = '%s %d';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otEquals.ToString, AValue]));
 end;
 
-procedure TDefaultCriteria.Where(AField: TField);
+procedure TDefaultCriteria.Where(const AField: TField);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otWhere.ToString, AField.Origin]));
 end;
 
-procedure TDefaultCriteria.Equals(AValue: Boolean);
+procedure TDefaultCriteria.Equals(const AValue: Boolean);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otEquals.ToString, BoolToStr(AValue, True)]));
 end;
 
-procedure TDefaultCriteria.Like(AValue: string);
+procedure TDefaultCriteria.Like(const AValue: string);
 const
   PHRASE = '::text %s %s';
 var
@@ -106,40 +106,40 @@ begin
   LParam.Value := AValue;
 end;
 
-procedure TDefaultCriteria.Order(AField: TField);
+procedure TDefaultCriteria.Order(const AField: TField);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otOrder.ToString, AField.Origin]));
 end;
 
-procedure TDefaultCriteria.Where(AField: string);
+procedure TDefaultCriteria.Where(const AField: string);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otWhere.ToString, AField]));
 end;
 
-procedure TDefaultCriteria.Where(AValue: Boolean);
+procedure TDefaultCriteria.Where(const AValue: Boolean);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otWhere.ToString, BoolToStr(AValue, True)]));
 end;
 
-procedure TDefaultCriteria.&Or(AField: TField);
+procedure TDefaultCriteria.&Or(const AField: TField);
 const
   PHRASE = ' %s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otOr.ToString, AField.Origin]));
 end;
 
-constructor TManagerCriteria.Create(AQuery: TFDQuery);
+constructor TManagerCriteria.Create(const AQuery: TFDQuery);
 begin
   FCriteria := GetInstanceCriteria(AQuery);
 end;
 
-function TManagerCriteria.GetDrive(AQuery: TFDQuery): string;
+function TManagerCriteria.GetDrive(const AQuery: TFDQuery): string;
 var
   LDef: IFDStanConnectionDef;
 begin
@@ -153,7 +153,7 @@ begin
   end;
 end;
 
-function TManagerCriteria.GetInstanceCriteria(AQuery: TFDQuery): ICriteria;
+function TManagerCriteria.GetInstanceCriteria(const AQuery: TFDQuery): ICriteria;
 begin
   case AnsiIndexStr(GetDrive(AQuery), ['PG']) of
     0:

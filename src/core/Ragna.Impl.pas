@@ -13,16 +13,16 @@ type
     procedure SaveState;
   private
     function GetTableName: string;
-    function HasField(AFields: array of TField): Boolean;
+    function HasField(const AFields: array of TField): Boolean;
     procedure RaiseNotFound;
   public
-    procedure Paginate(AOffSet, ALimit: integer);
-    procedure RadicalResearch(AValue: string; AFields: array of TField);
-    procedure Remove(AField: TField; AValue: Int64);
-    procedure FindById(AField: TField; AValue: Int64);
-    procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
-    procedure New(ABody: TJSONObject); overload;
-    procedure New(ABody: TJSONArray); overload;
+    procedure Paginate(const AOffSet, ALimit: integer);
+    procedure RadicalResearch(const AValue: string; const AFields: array of TField);
+    procedure Remove(const AField: TField; const AValue: Int64);
+    procedure FindById(const AField: TField; const AValue: Int64);
+    procedure UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject);
+    procedure New(const ABody: TJSONObject); overload;
+    procedure New(const ABody: TJSONArray); overload;
     procedure OpenUp;
     procedure OpenEmpty;
     procedure StartCriteria; deprecated;
@@ -32,7 +32,7 @@ type
     procedure ToJson(out AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONArray); overload;
-    constructor Create(AQuery: TFDQuery);
+    constructor Create(const AQuery: TFDQuery);
     destructor Destroy; override;
     property Query: TFDQuery read FQuery write FQuery;
     property Criteria: ICriteria read FCriteria write FCriteria;
@@ -42,7 +42,7 @@ implementation
 
 uses Ragna.State, System.SysUtils, Ragna, DataSet.Serialize;
 
-constructor TRagna.Create(AQuery: TFDQuery);
+constructor TRagna.Create(const AQuery: TFDQuery);
 begin
   FQuery := AQuery;
   SaveState;
@@ -50,7 +50,7 @@ begin
   FCriteria := FManagerCriteria.Criteria;
 end;
 
-procedure TRagna.Remove(AField: TField; AValue: Int64);
+procedure TRagna.Remove(const AField: TField; const AValue: Int64);
 const
   DELETE_SQL = 'DELETE FROM %s WHERE %s = :ID';
   DELETED: array [0 .. 1] of Boolean = (False, True);
@@ -92,7 +92,7 @@ begin
   Reset;
 end;
 
-procedure TRagna.FindById(AField: TField; AValue: Int64);
+procedure TRagna.FindById(const AField: TField; const AValue: Int64);
 var
   LField: string;
 begin
@@ -111,12 +111,12 @@ begin
   Result := FQuery.Table.Table.SourceName;
 end;
 
-function TRagna.HasField(AFields: array of TField): Boolean;
+function TRagna.HasField(const AFields: array of TField): Boolean;
 begin
   Result := Length(AFields) > 0;
 end;
 
-procedure TRagna.New(ABody: TJSONArray);
+procedure TRagna.New(const ABody: TJSONArray);
 begin
   OpenEmpty;
   FQuery.EditFromJson(ABody);
@@ -132,7 +132,7 @@ begin
   FQuery.Where('1').Equals('2').OpenUp;
 end;
 
-procedure TRagna.Paginate(AOffSet, ALimit: integer);
+procedure TRagna.Paginate(const AOffSet, ALimit: integer);
 begin
   if AOffSet > 0 then
     FQuery.FetchOptions.RecsSkip := AOffSet;
@@ -140,13 +140,13 @@ begin
     FQuery.FetchOptions.RecsMax := ALimit;
 end;
 
-procedure TRagna.New(ABody: TJSONObject);
+procedure TRagna.New(const ABody: TJSONObject);
 begin
   OpenEmpty;
   FQuery.EditFromJson(ABody);
 end;
 
-procedure TRagna.RadicalResearch(AValue: string; AFields: array of TField);
+procedure TRagna.RadicalResearch(const AValue: string; const AFields: array of TField);
 var
   LSearch: string;
   LCount: integer;
@@ -197,7 +197,7 @@ begin
   AJSON := FQuery.ToJSONArray;
 end;
 
-procedure TRagna.UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
+procedure TRagna.UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject);
 begin
   FQuery.FindById(AField, AValue).OpenUp.EditFromJson(ABody);
 end;

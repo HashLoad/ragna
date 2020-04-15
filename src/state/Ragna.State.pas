@@ -17,8 +17,8 @@ type
   public
     destructor Destroy; override;
     property States: TListQueryAndSql read FStates write FStates;
-    procedure SetState(AQuery: TFDQuery; ASQL: string);
-    function GetState(AQuery: TFDQuery; out ASQL: string): Boolean;
+    procedure SetState(const AQuery: TFDQuery; const ASQL: string);
+    function GetState(const AQuery: TFDQuery; out ASQL: string): Boolean;
     class function GetInstance: TRagnaState;
     class procedure Release;
     constructor Create;
@@ -46,7 +46,7 @@ begin
   Result := FInstance;
 end;
 
-function TRagnaState.GetState(AQuery: TFDQuery; out ASQL: string): Boolean;
+function TRagnaState.GetState(const AQuery: TFDQuery; out ASQL: string): Boolean;
 begin
   TMonitor.Enter(FStates);
   try
@@ -74,7 +74,7 @@ begin
   FInstance.Free;
 end;
 
-procedure TRagnaState.SetState(AQuery: TFDQuery; ASQL: string);
+procedure TRagnaState.SetState(const AQuery: TFDQuery; const ASQL: string);
 begin
   TMonitor.Enter(FStates);
   try
