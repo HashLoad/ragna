@@ -48,7 +48,7 @@ end;
 
 procedure TDefaultCriteria.&And(const AField: TField);
 begin
-  Self.And(AField.Origin);
+  Self.&And(AField.Origin);
 end;
 
 procedure TDefaultCriteria.&Or(const AField: string);
@@ -122,7 +122,7 @@ end;
 
 procedure TDefaultCriteria.&Or(const AField: TField);
 begin
-  Self.Or(AField.Origin);
+  Self.&Or(AField.Origin);
 end;
 
 procedure TDefaultCriteria.Order(const AField: string);
