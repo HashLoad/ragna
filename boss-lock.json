@@ -1,11 +1,11 @@
 {
-	"hash": "b14e6a77427d10f868e9622e3b2074b0",
-	"updated": "2019-07-26T10:10:24.8937824-03:00",
+	"hash": "d41d8cd98f00b204e9800998ecf8427e",
+	"updated": "2020-04-15T11:05:15.0912204-03:00",
 	"installedModules": {
-		"github.com/hunsche/datasetconverter4delphi": {
-			"name": "DataSetConverter4Delphi",
-			"version": "2.0.0",
-			"hash": "86494a27f5010c6819d370b1d4008621",
+		"github.com/viniciussanchez/dataset-serialize": {
+			"name": "dataset-serialize",
+			"version": "v2.0.3",
+			"hash": "0eef525d669652f4bb1468bfbdea879b",
 			"artifacts": {},
 			"failed": false,
 			"changed": false

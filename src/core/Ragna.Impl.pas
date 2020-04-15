@@ -2,10 +2,9 @@ unit Ragna.Impl;
 
 interface
 
-uses Ragna.Intf, FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Criteria;
+uses Ragna.Intf, Ragna.Criteria.Intf, FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Criteria.Impl;
 
 type
-
   TRagna = class(TInterfacedObject, IRagna)
   private
     FQuery: TFDQuery;
@@ -14,38 +13,34 @@ type
     procedure SaveState;
   private
     function GetTableName: string;
-    function HasField(AFields: array of TField): Boolean;
-    procedure OpenEmpty;
+    function HasField(const AFields: array of TField): Boolean;
     procedure RaiseNotFound;
   public
-    procedure Paginate(AOffSet, ALimit: integer);
-    procedure RadicalResearch(AValue: string; AFields: array of TField);
-    procedure Remove(AField: TField; AValue: Int64);
-    procedure FindById(AField: TField; AValue: Int64);
-    procedure UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
-    procedure New(ABody: TJSONObject); overload;
-    procedure New(ABody: TJSONArray); overload;
+    procedure Paginate(const AOffSet, ALimit: Integer);
+    procedure RadicalResearch(const AValue: string; const AFields: array of TField);
+    procedure Remove(const AField: TField; const AValue: Int64);
+    procedure FindById(const AField: TField; const AValue: Int64);
+    procedure UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject);
+    procedure New(const ABody: TJSONObject); overload;
+    procedure New(const ABody: TJSONArray); overload;
     procedure OpenUp;
-    procedure StartCriteria; deprecated;
-    procedure EndCriteria; deprecated;
+    procedure OpenEmpty;
     procedure Reset;
     procedure ToJson(out AJSON: TJSONArray); overload;
     procedure ToJson(out AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONArray); overload;
-    constructor Create(AQuery: TFDQuery);
-    destructor Destroy; Override;
+    constructor Create(const AQuery: TFDQuery);
+    destructor Destroy; override;
     property Query: TFDQuery read FQuery write FQuery;
     property Criteria: ICriteria read FCriteria write FCriteria;
   end;
 
 implementation
 
-{ TRagna }
+uses Ragna.State, System.SysUtils, Ragna, DataSet.Serialize;
 
-uses Ragna.State, System.SysUtils, Ragna, DataSetConverter4D;
-
-constructor TRagna.Create(AQuery: TFDQuery);
+constructor TRagna.Create(const AQuery: TFDQuery);
 begin
   FQuery := AQuery;
   SaveState;
@@ -53,12 +48,12 @@ begin
   FCriteria := FManagerCriteria.Criteria;
 end;
 
-procedure TRagna.Remove(AField: TField; AValue: Int64);
+procedure TRagna.Remove(const AField: TField; const AValue: Int64);
 const
   DELETE_SQL = 'DELETE FROM %s WHERE %s = :ID';
   DELETED: array [0 .. 1] of Boolean = (False, True);
 var
-  LDeleted: integer;
+  LDeleted: Integer;
   LSql: string;
 begin
   OpenEmpty;
@@ -75,42 +70,29 @@ end;
 
 procedure TRagna.SaveState;
 var
-  LKey: TFDQuery;
-  LSQL: string;
-  LRagnaState: TRagnaState;
+  LSql: string;
 begin
-  LKey := FQuery;
-  LRagnaState := TRagnaState.GetInstance;
-  if not LRagnaState.GetState(LKey, LSQL) then
-    LRagnaState.SetState(LKey, FQuery.SQL.Text);
+  if not TRagnaState.GetInstance.GetState(FQuery, LSql) then
+    TRagnaState.GetInstance.SetState(FQuery, FQuery.SQL.Text);
 end;
 
 procedure TRagna.EditFromJson(const AJSON: TJSONArray);
 begin
-  FQuery.FromJSONArray(AJSON);
+  FQuery.LoadFromJSON(AJSON);
 end;
 
-procedure TRagna.EndCriteria;
-begin
-  Reset;
-end;
-
-procedure TRagna.FindById(AField: TField; AValue: Int64);
+procedure TRagna.FindById(const AField: TField; const AValue: Int64);
 var
   LField: string;
 begin
   OpenEmpty;
   LField := GetTableName + '.' + AField.Origin;
-
-  FQuery
-    .Reset
-    .Where(LField)
-    .Equals(AValue);
+  FQuery.Reset.Where(LField).Equals(AValue);
 end;
 
 procedure TRagna.EditFromJson(const AJSON: TJSONObject);
 begin
-  FQuery.RecordFromJSONObject(AJSON);
+  FQuery.LoadFromJSON(AJSON);
 end;
 
 function TRagna.GetTableName: string;
@@ -118,12 +100,12 @@ begin
   Result := FQuery.Table.Table.SourceName;
 end;
 
-function TRagna.HasField(AFields: array of TField): Boolean;
+function TRagna.HasField(const AFields: array of TField): Boolean;
 begin
   Result := Length(AFields) > 0;
 end;
 
-procedure TRagna.New(ABody: TJSONArray);
+procedure TRagna.New(const ABody: TJSONArray);
 begin
   OpenEmpty;
   FQuery.EditFromJson(ABody);
@@ -136,48 +118,36 @@ end;
 
 procedure TRagna.OpenEmpty;
 begin
-  FQuery
-    .Where('1')
-    .Equals('2')
-    .OpenUp;
+  FQuery.Where('1').Equals('2').OpenUp;
 end;
 
-procedure TRagna.Paginate(AOffSet, ALimit: integer);
+procedure TRagna.Paginate(const AOffSet, ALimit: Integer);
 begin
   if AOffSet > 0 then
     FQuery.FetchOptions.RecsSkip := AOffSet;
-
   if ALimit > 0 then
     FQuery.FetchOptions.RecsMax := ALimit;
 end;
 
-procedure TRagna.New(ABody: TJSONObject);
+procedure TRagna.New(const ABody: TJSONObject);
 begin
   OpenEmpty;
   FQuery.EditFromJson(ABody);
 end;
 
-procedure TRagna.RadicalResearch(AValue: string; AFields: array of TField);
+procedure TRagna.RadicalResearch(const AValue: string; const AFields: array of TField);
 var
   LSearch: string;
-  LCount: integer;
+  LCount: Integer;
 begin
   if HasField(AFields) and not AValue.IsEmpty then
   begin
     LSearch := '%' + AValue + '%';
-    
-    FQuery
-      .Where(AFields[0])
-      .Like(LSearch);
-
+    FQuery.Where(AFields[0]).Like(LSearch);
     if ((Length(AFields) - 1) >= 2) then
     begin
       for LCount := 1 to Length(AFields) - 1 do
-      begin
-        FQuery
-          .&Or(AFields[LCount])
-          .Like(LSearch);
-      end;
+        FQuery.&Or(AFields[LCount]).Like(LSearch);
     end;
   end;
 end;
@@ -189,43 +159,27 @@ end;
 
 procedure TRagna.Reset;
 var
-  LKey: TFDQuery;
-  LSQL: string;
-  LRagnaState: TRagnaState;
+  LSql: string;
 begin
-  LKey := FQuery;
-  LRagnaState := TRagnaState.GetInstance;
-  LRagnaState.GetState(LKey, LSQL);
-  FQuery.SQL.Text := LSQL;
-end;
-
-procedure TRagna.StartCriteria;
-begin
-//  SaveState;
+  TRagnaState.GetInstance.GetState(FQuery, LSql);
+  FQuery.SQL.Text := LSql;
 end;
 
 procedure TRagna.ToJson(out AJSON: TJSONObject);
 begin
   if FQuery.IsEmpty then
     RaiseNotFound;
-
-  AJSON := FQuery.AsJSONObject;
+  AJSON := FQuery.ToJSONObject;
 end;
 
 procedure TRagna.ToJson(out AJSON: TJSONArray);
 begin
-  if FQuery.IsEmpty then
-    AJSON := TJSONArray.Create
-  else
-    AJSON := FQuery.AsJSONArray;
+  AJSON := FQuery.ToJSONArray;
 end;
 
-procedure TRagna.UpdateById(AField: TField; AValue: Int64; ABody: TJSONObject);
+procedure TRagna.UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject);
 begin
-  FQuery
-    .FindById(AField, AValue)
-    .OpenUp
-    .EditFromJson(ABody);
+  FQuery.FindById(AField, AValue).OpenUp.EditFromJson(ABody);
 end;
 
 end.
