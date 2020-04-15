@@ -18,7 +18,8 @@ type
     procedure &Equals(const AValue: Int64); overload;
     procedure &Equals(const AValue: Boolean); overload;
     procedure &Equals(const AValue: string); overload;
-    procedure Order(const AField: TField);
+    procedure Order(const AField: string); overload;
+    procedure Order(const AField: TField); overload;
   end;
 
 implementation

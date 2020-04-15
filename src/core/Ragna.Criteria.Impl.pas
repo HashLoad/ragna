@@ -20,7 +20,8 @@ type
     procedure &Equals(const AValue: Int64); overload;
     procedure &Equals(const AValue: Boolean); overload;
     procedure &Equals(const AValue: string); overload;
-    procedure Order(const AField: TField);
+    procedure Order(const AField: string); overload;
+    procedure Order(const AField: TField); overload;
     constructor Create(const AQuery: TFDQuery);
   end;
 
@@ -40,14 +41,14 @@ uses FireDAC.Stan.Intf, SysUtils;
 
 procedure TDefaultCriteria.&And(const AField: string);
 const
-  PHRASE = ' %s %s';
+  PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otAnd.ToString, AField]));
 end;
 
 procedure TDefaultCriteria.&And(const AField: TField);
 const
-  PHRASE = ' %s %s';
+  PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otAnd.ToString, AField.Origin]));
 end;
@@ -129,9 +130,16 @@ end;
 
 procedure TDefaultCriteria.&Or(const AField: TField);
 const
-  PHRASE = ' %s %s';
+  PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [otOr.ToString, AField.Origin]));
+end;
+
+procedure TDefaultCriteria.Order(const AField: string);
+const
+  PHRASE = '%s %s';
+begin
+  FQuery.SQL.Add(Format(PHRASE, [otOrder.ToString, AField]));
 end;
 
 constructor TManagerCriteria.Create(const AQuery: TFDQuery);
