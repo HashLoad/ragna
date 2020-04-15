@@ -14,7 +14,6 @@ type
   private
     function GetTableName: string;
     function HasField(AFields: array of TField): Boolean;
-    procedure OpenEmpty;
     procedure RaiseNotFound;
   public
     procedure Paginate(AOffSet, ALimit: integer);
@@ -25,6 +24,7 @@ type
     procedure New(ABody: TJSONObject); overload;
     procedure New(ABody: TJSONArray); overload;
     procedure OpenUp;
+    procedure OpenEmpty;
     procedure StartCriteria; deprecated;
     procedure EndCriteria; deprecated;
     procedure Reset;

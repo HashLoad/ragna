@@ -15,6 +15,7 @@ type
     function New(ABody: TJSONObject): TFDQuery; overload;
     function New(ABody: TJSONArray): TFDQuery; overload;
     function OpenUp: TFDQuery;
+    function OpenEmpty: TFDQuery;
     function StartCriteria: TFDQuery; deprecated;
     function EndCriteria: TFDQuery; deprecated;
     function Reset: TFDQuery;
@@ -216,6 +217,19 @@ begin
   LRagna := TRagna.Create(Self);
   try
     LRagna.New(ABody);
+  finally
+    LRagna.Free;
+  end;
+  Result := Self;
+end;
+
+function TRagnaHelper.OpenEmpty: TFDQuery;
+var
+  LRagna: TRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  try
+    LRagna.OpenEmpty;
   finally
     LRagna.Free;
   end;

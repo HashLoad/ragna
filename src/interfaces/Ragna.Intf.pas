@@ -15,6 +15,7 @@ type
     procedure New(ABody: TJSONObject); overload;
     procedure New(ABody: TJSONArray); overload;
     procedure OpenUp;
+    procedure OpenEmpty;
     procedure StartCriteria; deprecated;
     procedure EndCriteria; deprecated;
     procedure Reset;
