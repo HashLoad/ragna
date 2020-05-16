@@ -14,11 +14,9 @@ type
   private
     function GetTableName: string;
     function HasField(const AFields: array of TField): Boolean;
+    function ToJSONObject: TJSONObject;
+    function ToJSONArray: TJSONArray;
     procedure RaiseNotFound;
-  public
-    constructor Create(const AQuery: TFDQuery);
-    property Query: TFDQuery read FQuery write FQuery;
-    property Criteria: ICriteria read FCriteria write FCriteria;
     procedure Paginate(const AOffSet, ALimit: Integer);
     procedure RadicalResearch(const AValue: string; const AFields: array of TField);
     procedure Remove(const AField: TField; const AValue: Int64);
@@ -29,12 +27,14 @@ type
     procedure OpenUp;
     procedure OpenEmpty;
     procedure Reset;
-    procedure ToJson(out AJSON: TJSONArray); overload; deprecated;
-    procedure ToJson(out AJSON: TJSONObject); overload; deprecated;
+    procedure ToJson(out AJSON: TJSONArray); overload;
+    procedure ToJson(out AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONArray); overload;
-    function ToJSONArray: TJSONArray;
-    function ToJSONObject: TJSONObject;
+  public
+    constructor Create(const AQuery: TFDQuery);
+    property Query: TFDQuery read FQuery write FQuery;
+    property Criteria: ICriteria read FCriteria write FCriteria;
     destructor Destroy; override;
   end;
 
