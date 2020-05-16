@@ -16,6 +16,9 @@ type
     function HasField(const AFields: array of TField): Boolean;
     procedure RaiseNotFound;
   public
+    constructor Create(const AQuery: TFDQuery);
+    property Query: TFDQuery read FQuery write FQuery;
+    property Criteria: ICriteria read FCriteria write FCriteria;
     procedure Paginate(const AOffSet, ALimit: Integer);
     procedure RadicalResearch(const AValue: string; const AFields: array of TField);
     procedure Remove(const AField: TField; const AValue: Int64);
@@ -26,14 +29,13 @@ type
     procedure OpenUp;
     procedure OpenEmpty;
     procedure Reset;
-    procedure ToJson(out AJSON: TJSONArray); overload;
-    procedure ToJson(out AJSON: TJSONObject); overload;
+    procedure ToJson(out AJSON: TJSONArray); overload; deprecated;
+    procedure ToJson(out AJSON: TJSONObject); overload; deprecated;
     procedure EditFromJson(const AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONArray); overload;
-    constructor Create(const AQuery: TFDQuery);
+    function ToJSONArray: TJSONArray;
+    function ToJSONObject: TJSONObject;
     destructor Destroy; override;
-    property Query: TFDQuery read FQuery write FQuery;
-    property Criteria: ICriteria read FCriteria write FCriteria;
   end;
 
 implementation
@@ -167,14 +169,24 @@ end;
 
 procedure TRagna.ToJson(out AJSON: TJSONObject);
 begin
+  AJSON := Self.ToJSONObject;
+end;
+
+function TRagna.ToJSONArray: TJSONArray;
+begin
+  Result := FQuery.ToJSONArray;
+end;
+
+function TRagna.ToJSONObject: TJSONObject;
+begin
   if FQuery.IsEmpty then
     RaiseNotFound;
-  AJSON := FQuery.ToJSONObject;
+  Result := FQuery.ToJSONObject;
 end;
 
 procedure TRagna.ToJson(out AJSON: TJSONArray);
 begin
-  AJSON := FQuery.ToJSONArray;
+  AJSON := Self.ToJSONArray;
 end;
 
 procedure TRagna.UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject);

@@ -17,9 +17,11 @@ type
     procedure OpenUp;
     procedure OpenEmpty;
     procedure Reset;
-    procedure ToJson(out AJSON: TJSONArray); overload;
-    procedure ToJson(out AJSON: TJSONObject); overload;
+    procedure ToJson(out AJSON: TJSONArray); overload; deprecated;
+    procedure ToJson(out AJSON: TJSONObject); overload; deprecated;
     procedure EditFromJson(const AJSON: TJSONObject);
+    function ToJSONArray: TJSONArray;
+    function ToJSONObject: TJSONObject;
   end;
 
 implementation
