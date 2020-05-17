@@ -17,8 +17,10 @@ type
     function OpenUp: TFDQuery;
     function OpenEmpty: TFDQuery;
     function Reset: TFDQuery;
-    function ToJson(out AJSON: TJSONArray): TFDQuery; overload;
-    function ToJson(out AJSON: TJSONObject): TFDQuery; overload;
+    function ToJson(out AJSON: TJSONArray): TFDQuery; overload; deprecated;
+    function ToJson(out AJSON: TJSONObject): TFDQuery; overload; deprecated;
+    function ToJSONObject: TJSONObject;
+    function ToJSONArray: TJSONArray;
     function EditFromJson(const AJSON: TJSONObject): TFDQuery; overload;
     function EditFromJson(const AJSON: TJSONArray): TFDQuery; overload;
     function Where(const AField: string): TFDQuery; overload;
@@ -37,7 +39,7 @@ type
 
 implementation
 
-uses System.SysUtils;
+uses System.SysUtils, Ragna.Intf;
 
 function TRagnaHelper.&Or(const AField: TField): TFDQuery;
 var
@@ -93,27 +95,19 @@ end;
 
 function TRagnaHelper.Remove(const AField: TField; const AValue: Int64): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.Remove(AField, AValue);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.Remove(AField, AValue);
   Result := Self;
 end;
 
 function TRagnaHelper.EditFromJson(const AJSON: TJSONArray): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.EditFromJson(AJSON);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.EditFromJson(AJSON);
   Result := Self;
 end;
 
@@ -122,11 +116,7 @@ var
   LRagna: TRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.Criteria.Equals(AValue);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.Criteria.Equals(AValue);
   Result := Self;
 end;
 
@@ -158,27 +148,19 @@ end;
 
 function TRagnaHelper.FindById(const AField: TField; const AValue: Int64): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.FindById(AField, AValue);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.FindById(AField, AValue);
   Result := Self;
 end;
 
 function TRagnaHelper.EditFromJson(const AJSON: TJSONObject): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.EditFromJson(AJSON);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.EditFromJson(AJSON);
   Result := Self;
 end;
 
@@ -197,40 +179,28 @@ end;
 
 function TRagnaHelper.New(const ABody: TJSONArray): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.New(ABody);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.New(ABody);
   Result := Self;
 end;
 
 function TRagnaHelper.OpenEmpty: TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.OpenEmpty;
-  finally
-    LRagna.Free;
-  end;
+  LRagna.OpenEmpty;
   Result := Self;
 end;
 
 function TRagnaHelper.OpenUp: TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.OpenUp;
-  finally
-    LRagna.Free;
-  end;
+  LRagna.OpenUp;
   Result := Self;
 end;
 
@@ -249,92 +219,80 @@ end;
 
 function TRagnaHelper.Paginate(const AOffSet, ALimit: Integer): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.Paginate(AOffSet, ALimit);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.Paginate(AOffSet, ALimit);
   Result := Self;
 end;
 
 function TRagnaHelper.New(const ABody: TJSONObject): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.New(ABody);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.New(ABody);
   Result := Self;
 end;
 
 function TRagnaHelper.RadicalResearch(const AValue: string; const AFields: array of TField): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.RadicalResearch(AValue, AFields);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.RadicalResearch(AValue, AFields);
   Result := Self;
 end;
 
 function TRagnaHelper.Reset: TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.Reset;
-  finally
-    LRagna.Free;
-  end;
+  LRagna.Reset;
   Result := Self;
 end;
 
 function TRagnaHelper.ToJson(out AJSON: TJSONObject): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.ToJson(AJSON);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.ToJson(AJSON);
   Result := Self;
+end;
+
+function TRagnaHelper.ToJSONArray: TJSONArray;
+var
+  LRagna: IRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  Result := LRagna.ToJSONArray;
+end;
+
+function TRagnaHelper.ToJSONObject: TJSONObject;
+var
+  LRagna: IRagna;
+begin
+  LRagna := TRagna.Create(Self);
+  Result := LRagna.ToJSONObject;
 end;
 
 function TRagnaHelper.ToJson(out AJSON: TJSONArray): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.ToJson(AJSON);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.ToJson(AJSON);
   Result := Self;
 end;
 
 function TRagnaHelper.UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject): TFDQuery;
 var
-  LRagna: TRagna;
+  LRagna: IRagna;
 begin
   LRagna := TRagna.Create(Self);
-  try
-    LRagna.UpdateById(AField, AValue, ABody);
-  finally
-    LRagna.Free;
-  end;
+  LRagna.UpdateById(AField, AValue, ABody);
   Result := Self;
 end;
 

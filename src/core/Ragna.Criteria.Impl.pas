@@ -8,7 +8,6 @@ type
   TDefaultCriteria = class(TInterfacedObject, ICriteria)
   private
     FQuery: TFDQuery;
-  public
     procedure Where(const AField: string); overload;
     procedure Where(const AField: TField); overload;
     procedure Where(const AValue: Boolean); overload;
@@ -22,6 +21,7 @@ type
     procedure &Equals(const AValue: string); overload;
     procedure Order(const AField: string); overload;
     procedure Order(const AField: TField); overload;
+  public
     constructor Create(const AQuery: TFDQuery);
   end;
 

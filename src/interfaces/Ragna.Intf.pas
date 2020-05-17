@@ -19,7 +19,10 @@ type
     procedure Reset;
     procedure ToJson(out AJSON: TJSONArray); overload;
     procedure ToJson(out AJSON: TJSONObject); overload;
-    procedure EditFromJson(const AJSON: TJSONObject);
+    procedure EditFromJson(const AJSON: TJSONObject); overload;
+    procedure EditFromJson(const AJSON: TJSONArray); overload;
+    function ToJSONArray: TJSONArray;
+    function ToJSONObject: TJSONObject;
   end;
 
 implementation
