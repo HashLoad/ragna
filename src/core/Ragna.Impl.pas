@@ -174,14 +174,14 @@ end;
 
 function TRagna.ToJSONArray: TJSONArray;
 begin
-  Result := FQuery.ToJSONArray;
+  Result := (FQuery as TDataSet).ToJSONArray;
 end;
 
 function TRagna.ToJSONObject: TJSONObject;
 begin
   if FQuery.IsEmpty then
     RaiseNotFound;
-  Result := FQuery.ToJSONObject;
+  Result := (FQuery as TDataSet).ToJSONObject;
 end;
 
 procedure TRagna.ToJson(out AJSON: TJSONArray);
