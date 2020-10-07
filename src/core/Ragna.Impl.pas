@@ -80,7 +80,7 @@ end;
 
 procedure TRagna.EditFromJson(const AJSON: TJSONArray);
 begin
-  FQuery.LoadFromJSON(AJSON);
+  FQuery.LoadFromJSON(AJSON, False);
 end;
 
 procedure TRagna.FindById(const AField: TField; const AValue: Int64);
@@ -94,7 +94,7 @@ end;
 
 procedure TRagna.EditFromJson(const AJSON: TJSONObject);
 begin
-  FQuery.LoadFromJSON(AJSON);
+  FQuery.LoadFromJSON(AJSON, False);
 end;
 
 function TRagna.GetTableName: string;
