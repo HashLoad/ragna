@@ -191,7 +191,7 @@ end;
 
 procedure TRagna.UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject);
 begin
-  FQuery.FindById(AField, AValue).OpenUp.EditFromJson(ABody);
+  FQuery.FindById(AField, AValue).OpenUp.MergeFromJSONObject(ABody, False);
 end;
 
 end.
