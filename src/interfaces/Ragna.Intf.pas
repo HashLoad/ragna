@@ -1,5 +1,9 @@
 unit Ragna.Intf;
 
+{$IF DEFINED(FPC)}
+  {$MODE DELPHI}{$H+}
+{$ENDIF}
+
 interface
 
 uses FireDAC.Comp.Client, System.JSON, Data.DB;

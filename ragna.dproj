@@ -58,7 +58,7 @@
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <SanitizedProjectName>ragna</SanitizedProjectName>
-        <DCC_UnitSearchPath>$(DCC_UnitSearchPath);modules\.dcp;modules\.dcu;modules;modules\dataset-serialize\samples\basic\src;modules\dataset-serialize\samples\configuration\src;modules\dataset-serialize\samples\master-detail\src;modules\dataset-serialize\src\core;modules\dataset-serialize\src\helpers;modules\dataset-serialize\src\providers;modules\dataset-serialize\src\singletons;modules\dataset-serialize\src\types</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>$(DCC_UnitSearchPath);modules\.dcp;modules\.dcu;modules;modules\dataset-serialize\src</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <DCC_CBuilderOutput>None</DCC_CBuilderOutput>

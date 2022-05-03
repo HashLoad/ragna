@@ -1,47 +1,52 @@
 unit Ragna;
 
+{$IF DEFINED(FPC)}
+  {$MODE DELPHI}{$H+}
+{$ENDIF}
+
 interface
 
-uses FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Impl, Ragna.Criteria.Impl;
+uses {$IFDEF UNIDAC}Uni{$ELSE}FireDAC.Comp.Client{$ENDIF}, System.JSON, Data.DB, Ragna.Impl, Ragna.Criteria.Impl;
 
 type
-  TRagnaHelper = class helper for TFDQuery
+  TRagnaHelper = class helper for {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}
   public
-    function Paginate(const AOffSet, ALimit: Integer): TFDQuery;
-    function RadicalResearch(const AValue: string; const AFields: array of TField): TFDQuery;
-    function Remove(const AField: TField; const AValue: Int64): TFDQuery;
-    function FindById(const AField: TField; const AValue: Int64): TFDQuery;
-    function UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject): TFDQuery;
-    function New(const ABody: TJSONObject): TFDQuery; overload;
-    function New(const ABody: TJSONArray): TFDQuery; overload;
-    function OpenUp: TFDQuery;
-    function OpenEmpty: TFDQuery;
-    function Reset: TFDQuery;
-    function ToJson(out AJSON: TJSONArray): TFDQuery; overload; deprecated;
-    function ToJson(out AJSON: TJSONObject): TFDQuery; overload; deprecated;
+    function Paginate(const AOffSet, ALimit: Integer): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
+    function RadicalResearch(const AValue: string; const AFields: array of TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
+    function Remove(const AField: TField; const AValue: Int64): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
+    function FindById(const AField: TField; const AValue: Int64): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
+    function UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
+    function New(const ABody: TJSONObject): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function New(const ABody: TJSONArray): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function OpenUp: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
+    function OpenEmpty: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
+    function Reset: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
+    function ToJson(out AJSON: TJSONArray): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload; deprecated;
+    function ToJson(out AJSON: TJSONObject): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload; deprecated;
     function ToJSONObject: TJSONObject;
     function ToJSONArray: TJSONArray;
-    function EditFromJson(const AJSON: TJSONObject): TFDQuery; overload;
-    function EditFromJson(const AJSON: TJSONArray): TFDQuery; overload;
-    function Where(const AField: string): TFDQuery; overload;
-    function Where(const AField: TField): TFDQuery; overload;
-    function Where(const AValue: Boolean): TFDQuery; overload;
-    function &Or(const AField: TField): TFDQuery; overload;
-    function &Or(const AField: string): TFDQuery; overload;
-    function &And(const AField: TField): TFDQuery; overload;
-    function &And(const AField: string): TFDQuery; overload;
-    function Like(const AValue: string): TFDQuery;
-    function &Equals(const AValue: Int64): TFDQuery; overload;
-    function &Equals(const AValue: Boolean): TFDQuery; overload;
-    function &Equals(const AValue: string): TFDQuery; overload;
-    function Order(const AField: TField): TFDQuery;
+    function EditFromJson(const AJSON: TJSONObject): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function EditFromJson(const AJSON: TJSONArray): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function Where(const AField: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function Where(const AField: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function Where(const AValue: Boolean): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function &Or(const AField: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function &Or(const AField: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function &And(const AField: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function &And(const AField: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function Like(const AValue: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function Like(const AValue: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function &Equals(const AValue: Int64): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function &Equals(const AValue: Boolean): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function &Equals(const AValue: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; overload;
+    function Order(const AField: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
   end;
 
 implementation
 
 uses System.SysUtils, Ragna.Intf;
 
-function TRagnaHelper.&Or(const AField: TField): TFDQuery;
+function TRagnaHelper.&Or(const AField: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -54,7 +59,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.&And(const AField: TField): TFDQuery;
+function TRagnaHelper.&And(const AField: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -67,7 +72,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.&And(const AField: string): TFDQuery;
+function TRagnaHelper.&And(const AField: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -80,7 +85,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.&Or(const AField: string): TFDQuery;
+function TRagnaHelper.&Or(const AField: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -93,7 +98,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Remove(const AField: TField; const AValue: Int64): TFDQuery;
+function TRagnaHelper.Remove(const AField: TField; const AValue: Int64): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -102,7 +107,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.EditFromJson(const AJSON: TJSONArray): TFDQuery;
+function TRagnaHelper.EditFromJson(const AJSON: TJSONArray): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -111,7 +116,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Equals(const AValue: string): TFDQuery;
+function TRagnaHelper.Equals(const AValue: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -120,7 +125,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Equals(const AValue: Boolean): TFDQuery;
+function TRagnaHelper.Equals(const AValue: Boolean): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -133,7 +138,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Equals(const AValue: Int64): TFDQuery;
+function TRagnaHelper.Equals(const AValue: Int64): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -146,7 +151,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.FindById(const AField: TField; const AValue: Int64): TFDQuery;
+function TRagnaHelper.FindById(const AField: TField; const AValue: Int64): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -155,7 +160,12 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.EditFromJson(const AJSON: TJSONObject): TFDQuery;
+function TRagnaHelper.Like(const AValue: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
+begin
+
+end;
+
+function TRagnaHelper.EditFromJson(const AJSON: TJSONObject): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -164,7 +174,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Like(const AValue: string): TFDQuery;
+function TRagnaHelper.Like(const AValue: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -177,7 +187,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.New(const ABody: TJSONArray): TFDQuery;
+function TRagnaHelper.New(const ABody: TJSONArray): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -186,7 +196,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.OpenEmpty: TFDQuery;
+function TRagnaHelper.OpenEmpty: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -195,7 +205,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.OpenUp: TFDQuery;
+function TRagnaHelper.OpenUp: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -204,7 +214,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Order(const AField: TField): TFDQuery;
+function TRagnaHelper.Order(const AField: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -217,7 +227,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Paginate(const AOffSet, ALimit: Integer): TFDQuery;
+function TRagnaHelper.Paginate(const AOffSet, ALimit: Integer): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -226,7 +236,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.New(const ABody: TJSONObject): TFDQuery;
+function TRagnaHelper.New(const ABody: TJSONObject): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -235,7 +245,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.RadicalResearch(const AValue: string; const AFields: array of TField): TFDQuery;
+function TRagnaHelper.RadicalResearch(const AValue: string; const AFields: array of TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -244,7 +254,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Reset: TFDQuery;
+function TRagnaHelper.Reset: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -253,7 +263,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.ToJson(out AJSON: TJSONObject): TFDQuery;
+function TRagnaHelper.ToJson(out AJSON: TJSONObject): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -278,7 +288,7 @@ begin
   Result := LRagna.ToJSONObject;
 end;
 
-function TRagnaHelper.ToJson(out AJSON: TJSONArray): TFDQuery;
+function TRagnaHelper.ToJson(out AJSON: TJSONArray): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: IRagna;
 begin
@@ -296,7 +306,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Where(const AField: string): TFDQuery;
+function TRagnaHelper.Where(const AField: string): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -309,7 +319,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Where(const AValue: Boolean): TFDQuery;
+function TRagnaHelper.Where(const AValue: Boolean): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin
@@ -322,7 +332,7 @@ begin
   Result := Self;
 end;
 
-function TRagnaHelper.Where(const AField: TField): TFDQuery;
+function TRagnaHelper.Where(const AField: TField): {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
 var
   LRagna: TRagna;
 begin

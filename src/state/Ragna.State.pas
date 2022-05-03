@@ -1,24 +1,27 @@
 unit Ragna.State;
 
+{$IF DEFINED(FPC)}
+  {$MODE DELPHI}{$H+}
+{$ENDIF}
+
 interface
 
-uses System.Generics.Collections, FireDac.Comp.Client, System.Rtti;
+uses System.Generics.Collections, {$IFDEF UNIDAC}Uni{$ELSE}FireDac.Comp.Client{$ENDIF}, System.Rtti;
 
 type
-  TListQueryAndSql = TDictionary<TFDQuery, string>;
+  TListQueryAndSql = TDictionary<{$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}, string>;
 
   TRagnaState = class
   private
     FStates: TListQueryAndSql;
     FVmi: TVirtualMethodInterceptor;
     class var FInstance: TRagnaState;
-    procedure OnBeforVMI(Instance: TObject; Method: TRttiMethod; const Args: TArray<TValue>; out DoInvoke: Boolean;
-      out Result: TValue);
+    procedure OnBeforVMI(Instance: TObject; Method: TRttiMethod; const Args: TArray<TValue>; out DoInvoke: Boolean; out Result: TValue);
   public
     destructor Destroy; override;
     property States: TListQueryAndSql read FStates write FStates;
-    procedure SetState(const AQuery: TFDQuery; const ASQL: string);
-    function GetState(const AQuery: TFDQuery; out ASQL: string): Boolean;
+    procedure SetState(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; const ASQL: string);
+    function GetState(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; out ASQL: string): Boolean;
     class function GetInstance: TRagnaState;
     class procedure Release;
     constructor Create;
@@ -28,7 +31,7 @@ implementation
 
 constructor TRagnaState.Create;
 begin
-  FVmi := TVirtualMethodInterceptor.Create(TFDQuery);
+  FVmi := TVirtualMethodInterceptor.Create({$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF});
   FVmi.OnBefore := OnBeforVMI;
   FStates := TListQueryAndSql.Create;
 end;
@@ -46,7 +49,7 @@ begin
   Result := FInstance;
 end;
 
-function TRagnaState.GetState(const AQuery: TFDQuery; out ASQL: string): Boolean;
+function TRagnaState.GetState(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; out ASQL: string): Boolean;
 begin
   TMonitor.Enter(FStates);
   try
@@ -63,7 +66,7 @@ begin
     Exit;
   TMonitor.Enter(FStates);
   try
-    FStates.Remove(Instance as TFDQuery);
+    FStates.Remove(Instance as {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF});
   finally
     TMonitor.Exit(FStates);
   end;
@@ -74,7 +77,7 @@ begin
   FInstance.Free;
 end;
 
-procedure TRagnaState.SetState(const AQuery: TFDQuery; const ASQL: string);
+procedure TRagnaState.SetState(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF}; const ASQL: string);
 begin
   TMonitor.Enter(FStates);
   try

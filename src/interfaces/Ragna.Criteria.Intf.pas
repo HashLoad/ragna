@@ -1,5 +1,9 @@
 unit Ragna.Criteria.Intf;
 
+{$IF DEFINED(FPC)}
+  {$MODE DELPHI}{$H+}
+{$ENDIF}
+
 interface
 
 uses Data.DB;
@@ -14,7 +18,8 @@ type
     procedure &Or(const AField: TField); overload;
     procedure &And(const AField: string); overload;
     procedure &And(const AField: TField); overload;
-    procedure Like(const AValue: string);
+    procedure Like(const AValue: string); overload;
+    procedure Like(const AValue: TField); overload;
     procedure &Equals(const AValue: Int64); overload;
     procedure &Equals(const AValue: Boolean); overload;
     procedure &Equals(const AValue: string); overload;

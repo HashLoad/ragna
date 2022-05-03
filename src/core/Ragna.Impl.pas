@@ -1,23 +1,31 @@
 unit Ragna.Impl;
 
+{$IF DEFINED(FPC)}
+  {$MODE DELPHI}{$H+}
+{$ENDIF}
+
 interface
 
-uses Ragna.Intf, Ragna.Criteria.Intf, FireDAC.Comp.Client, System.JSON, Data.DB, Ragna.Criteria.Impl;
+uses {$IFDEF UNIDAC}Uni, SqlClassesUni{$ELSE}FireDAC.Comp.Client{$ENDIF}, Ragna.Intf, Ragna.Criteria.Intf, System.JSON, Data.DB, Ragna.Criteria.Impl;
 
 type
   TRagna = class(TInterfacedObject, IRagna)
   private
-    FQuery: TFDQuery;
+    FQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
     FManagerCriteria: TManagerCriteria;
     FCriteria: ICriteria;
     procedure SaveState;
   private
+    {$IFDEF UNIDAC}
+    function GetTableName(AField: TField): string;
+    {$ELSE}
     function GetTableName: string;
+    {$ENDIF}
     function HasField(const AFields: array of TField): Boolean;
     function ToJSONObject: TJSONObject;
     function ToJSONArray: TJSONArray;
     procedure RaiseNotFound;
-    procedure Paginate(const AOffSet, ALimit: Integer);
+    procedure Paginate(const AOffSet, ALimit: Integer); {$IFDEF UNIDAC} deprecated 'Not implemented for UniDAC';{$ENDIF}
     procedure RadicalResearch(const AValue: string; const AFields: array of TField);
     procedure Remove(const AField: TField; const AValue: Int64);
     procedure FindById(const AField: TField; const AValue: Int64);
@@ -32,8 +40,8 @@ type
     procedure EditFromJson(const AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONArray); overload;
   public
-    constructor Create(const AQuery: TFDQuery);
-    property Query: TFDQuery read FQuery write FQuery;
+    constructor Create(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF});
+    property Query: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF} read FQuery write FQuery;
     property Criteria: ICriteria read FCriteria write FCriteria;
     destructor Destroy; override;
   end;
@@ -42,7 +50,7 @@ implementation
 
 uses Ragna.State, System.SysUtils, Ragna, DataSet.Serialize;
 
-constructor TRagna.Create(const AQuery: TFDQuery);
+constructor TRagna.Create(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF});
 begin
   FQuery := AQuery;
   SaveState;
@@ -59,7 +67,7 @@ var
   LSql: string;
 begin
   OpenEmpty;
-  LSql := Format(DELETE_SQL, [GetTableName, AField.FieldName]);
+  LSql := Format(DELETE_SQL, [{$IFDEF UNIDAC}GetTableName(AField){$ELSE}GetTableName{$ENDIF}, AField.FieldName]);
   LDeleted := FQuery.Connection.ExecSQL(LSql, [AValue]);
   if not DELETED[LDeleted] then
     RaiseNotFound;
@@ -88,7 +96,7 @@ var
   LField: string;
 begin
   OpenEmpty;
-  LField := GetTableName + '.' + AField.Origin;
+  LField := {$IFDEF UNIDAC}GetTableName(AField){$ELSE}GetTableName{$ENDIF} + '.' + AField.Origin;
   FQuery.Reset.Where(LField).Equals(AValue);
 end;
 
@@ -97,10 +105,20 @@ begin
   FQuery.LoadFromJSON(AJSON, False);
 end;
 
+{$IFDEF UNIDAC}
+function TRagna.GetTableName(AField: TField): string;
+var
+  LFieldDesc: TSqlFieldDesc;
+begin
+  LFieldDesc := TSqlFieldDesc(FQuery.GetFieldDesc(AField));
+  Result := LFieldDesc.BaseTableName;
+end;
+{$ELSE}
 function TRagna.GetTableName: string;
 begin
   Result := FQuery.Table.Table.SourceName;
 end;
+{$ENDIF}
 
 function TRagna.HasField(const AFields: array of TField): Boolean;
 begin
@@ -125,10 +143,14 @@ end;
 
 procedure TRagna.Paginate(const AOffSet, ALimit: Integer);
 begin
+  {$IFDEF UNIDAC}
+  raise Exception.Create('Not implemented for UniDAC');
+  {$ELSE}
   if AOffSet > 0 then
     FQuery.FetchOptions.RecsSkip := AOffSet;
   if ALimit > 0 then
     FQuery.FetchOptions.RecsMax := ALimit;
+  {$ENDIF}
 end;
 
 procedure TRagna.New(const ABody: TJSONObject);

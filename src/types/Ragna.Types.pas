@@ -1,9 +1,15 @@
 unit Ragna.Types;
 
+{$IF DEFINED(FPC)}
+  {$MODE DELPHI}{$H+}
+{$ENDIF}
+
 interface
 
 type
-  TOperatorType = (otWhere, otOr, otLike, otEquals, otOrder, otAnd);
+{$SCOPEDENUMS ON}
+  TOperatorType = (WHERE, &OR, LIKE, EQUALS, ORDER, &AND);
+{$SCOPEDENUMS OFF}
 
   TOperatorTypeHelper = record helper for TOperatorType
   public
@@ -15,17 +21,17 @@ implementation
 function TOperatorTypeHelper.ToString: string;
 begin
   case Self of
-    otWhere:
+    TOperatorType.WHERE:
       Result := 'WHERE';
-    otOr:
+    TOperatorType.OR:
       Result := 'OR';
-    otLike:
+    TOperatorType.LIKE:
       Result := 'LIKE';
-    otEquals:
+    TOperatorType.EQUALS:
       Result := '=';
-    otOrder:
+    TOperatorType.ORDER:
       Result := 'ORDER BY';
-    otAnd:
+    TOperatorType.AND:
       Result := 'AND';
   end;
 end;
