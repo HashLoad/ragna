@@ -13,20 +13,14 @@ type
   TDefaultCriteria = class(TInterfacedObject, ICriteria)
   private
     FQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF};
-    procedure Where(const AField: string); overload;
-    procedure Where(const AField: TField); overload;
-    procedure Where(const AValue: Boolean); overload;
-    procedure &Or(const AField: string); overload;
-    procedure &Or(const AField: TField); overload;
-    procedure &And(const AField: string); overload;
-    procedure &And(const AField: TField); overload;
-    procedure Like(const AValue: string); overload;
-    procedure Like(const AValue: TField); overload;
+    procedure Where(const AField: string);
+    procedure &Or(const AField: string);
+    procedure &And(const AField: string);
+    procedure Like(const AValue: string);
     procedure &Equals(const AValue: Int64); overload;
     procedure &Equals(const AValue: Boolean); overload;
     procedure &Equals(const AValue: string); overload;
-    procedure Order(const AField: string); overload;
-    procedure Order(const AField: TField); overload;
+    procedure Order(const AField: string);
   public
     constructor Create(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF});
   end;
@@ -52,11 +46,6 @@ begin
   FQuery.SQL.Add(Format(PHRASE, [TOperatorType.AND.ToString, AField]));
 end;
 
-procedure TDefaultCriteria.&And(const AField: TField);
-begin
-  Self.&And(AField.Origin);
-end;
-
 procedure TDefaultCriteria.&Or(const AField: string);
 const
   PHRASE = ' %s %s';
@@ -69,16 +58,11 @@ begin
   FQuery := AQuery;
 end;
 
-procedure TDefaultCriteria.Equals(const AValue: string);
+procedure TDefaultCriteria.Equals(const AValue: Boolean);
 const
-  PHRASE = '%s ''%s''';
+  PHRASE = '%s %s';
 begin
-  FQuery.SQL.Add(Format(PHRASE, [TOperatorType.EQUALS.ToString, AValue]));
-end;
-
-procedure TDefaultCriteria.Like(const AValue: TField);
-begin
-  Like(AValue.AsString);
+  FQuery.SQL.Add(Format(PHRASE, [TOperatorType.EQUALS.ToString, BoolToStr(AValue, True)]));
 end;
 
 procedure TDefaultCriteria.Equals(const AValue: Int64);
@@ -88,16 +72,11 @@ begin
   FQuery.SQL.Add(Format(PHRASE, [TOperatorType.EQUALS.ToString, AValue]));
 end;
 
-procedure TDefaultCriteria.Where(const AField: TField);
-begin
-  Self.Where(AField.Origin);
-end;
-
-procedure TDefaultCriteria.Equals(const AValue: Boolean);
+procedure TDefaultCriteria.Equals(const AValue: string);
 const
-  PHRASE = '%s %s';
+  PHRASE = '%s ''%s''';
 begin
-  FQuery.SQL.Add(Format(PHRASE, [TOperatorType.EQUALS.ToString, BoolToStr(AValue, True)]));
+  FQuery.SQL.Add(Format(PHRASE, [TOperatorType.EQUALS.ToString, AValue]));
 end;
 
 procedure TDefaultCriteria.Like(const AValue: string);
@@ -117,26 +96,11 @@ begin
     LParam.Value := AValue;
 end;
 
-procedure TDefaultCriteria.Order(const AField: TField);
-begin
-  Self.Order(AField.Origin);
-end;
-
 procedure TDefaultCriteria.Where(const AField: string);
 const
   PHRASE = '%s %s';
 begin
   FQuery.SQL.Add(Format(PHRASE, [TOperatorType.WHERE.ToString, AField]));
-end;
-
-procedure TDefaultCriteria.Where(const AValue: Boolean);
-begin
-  Self.Where(BoolToStr(AValue, True));
-end;
-
-procedure TDefaultCriteria.&Or(const AField: TField);
-begin
-  Self.&Or(AField.Origin);
 end;
 
 procedure TDefaultCriteria.Order(const AField: string);

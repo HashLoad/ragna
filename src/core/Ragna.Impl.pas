@@ -30,15 +30,15 @@ type
     procedure Remove(const AField: TField; const AValue: Int64);
     procedure FindById(const AField: TField; const AValue: Int64);
     procedure UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject);
-    procedure New(const ABody: TJSONObject); overload;
-    procedure New(const ABody: TJSONArray); overload;
     procedure OpenUp;
     procedure OpenEmpty;
     procedure Reset;
-    procedure ToJson(out AJSON: TJSONArray); overload;
-    procedure ToJson(out AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONObject); overload;
     procedure EditFromJson(const AJSON: TJSONArray); overload;
+    procedure EditFromJson(const AJSON: string); overload;
+    procedure New(const ABody: TJSONObject); overload;
+    procedure New(const ABody: TJSONArray); overload;
+    procedure New(const ABody: string); overload;
   public
     constructor Create(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF});
     property Query: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF} read FQuery write FQuery;
@@ -78,6 +78,11 @@ begin
   FManagerCriteria.Free;
 end;
 
+procedure TRagna.EditFromJson(const AJSON: string);
+begin
+  FQuery.MergeFromJSONObject(AJSON);
+end;
+
 procedure TRagna.SaveState;
 var
   LSql: string;
@@ -102,7 +107,7 @@ end;
 
 procedure TRagna.EditFromJson(const AJSON: TJSONObject);
 begin
-  FQuery.LoadFromJSON(AJSON, False);
+  FQuery.MergeFromJSONObject(AJSON, False);
 end;
 
 {$IFDEF UNIDAC}
@@ -125,10 +130,16 @@ begin
   Result := Length(AFields) > 0;
 end;
 
+procedure TRagna.New(const ABody: string);
+begin
+  OpenEmpty;
+  FQuery.LoadFromJSON(ABody);
+end;
+
 procedure TRagna.New(const ABody: TJSONArray);
 begin
   OpenEmpty;
-  FQuery.EditFromJson(ABody);
+  FQuery.LoadFromJSON(ABody);
 end;
 
 procedure TRagna.OpenUp;
@@ -156,7 +167,7 @@ end;
 procedure TRagna.New(const ABody: TJSONObject);
 begin
   OpenEmpty;
-  FQuery.EditFromJson(ABody);
+  FQuery.LoadFromJSON(ABody);
 end;
 
 procedure TRagna.RadicalResearch(const AValue: string; const AFields: array of TField);
@@ -189,11 +200,6 @@ begin
   FQuery.SQL.Text := LSql;
 end;
 
-procedure TRagna.ToJson(out AJSON: TJSONObject);
-begin
-  AJSON := Self.ToJSONObject;
-end;
-
 function TRagna.ToJSONArray: TJSONArray;
 begin
   Result := (FQuery as TDataSet).ToJSONArray;
@@ -204,11 +210,6 @@ begin
   if FQuery.IsEmpty then
     RaiseNotFound;
   Result := (FQuery as TDataSet).ToJSONObject;
-end;
-
-procedure TRagna.ToJson(out AJSON: TJSONArray);
-begin
-  AJSON := Self.ToJSONArray;
 end;
 
 procedure TRagna.UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject);
