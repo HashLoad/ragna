@@ -1,5 +1,5 @@
 unit Ragna.Criteria.Impl;
-
+
 {$IF DEFINED(FPC)}
   {$MODE DELPHI}{$H+}
 {$ENDIF}
@@ -17,9 +17,9 @@ type
     procedure &Or(const AField: string);
     procedure &And(const AField: string);
     procedure Like(const AValue: string);
-    procedure &Equals(const AValue: Int64); overload;
-    procedure &Equals(const AValue: Boolean); overload;
-    procedure &Equals(const AValue: string); overload;
+    procedure &Equals(const AValue: Int64); reintroduce; overload;
+    procedure &Equals(const AValue: Boolean); reintroduce; overload;
+    procedure &Equals(const AValue: string); reintroduce; overload;
     procedure Order(const AField: string);
   public
     constructor Create(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF});
@@ -146,4 +146,4 @@ begin
 end;
 
 end.
-
+
