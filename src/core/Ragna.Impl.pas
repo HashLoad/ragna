@@ -245,7 +245,7 @@ var
   I: Integer;
 begin
   Result := EmptyStr;
-  for I := 1 to Pred(Texto.Length) do
+  for I := 1 to Texto.Length do
   begin
     if not Result.Trim.IsEmpty then
     begin
