@@ -66,7 +66,6 @@ var
   LDeleted: Integer;
   LSql: string;
 begin
-  OpenEmpty;
   LSql := Format(DELETE_SQL, [{$IFDEF UNIDAC}GetTableName(AField){$ELSE}GetTableName{$ENDIF}, AField.FieldName]);
   LDeleted := FQuery.Connection.ExecSQL(LSql, [AValue]);
   if not DELETED[LDeleted] then
@@ -100,7 +99,6 @@ procedure TRagna.FindById(const AField: TField; const AValue: Int64);
 var
   LField: string;
 begin
-  OpenEmpty;
   LField := {$IFDEF UNIDAC}GetTableName(AField){$ELSE}GetTableName{$ENDIF} + '.' + AField.Origin;
   FQuery.Reset.Where(LField).Equals(AValue);
 end;
