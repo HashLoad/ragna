@@ -16,11 +16,6 @@ type
     FCriteria: ICriteria;
     procedure SaveState;
   private
-    {$IFDEF UNIDAC}
-    function GetTableName(AField: TField): string;
-    {$ELSE}
-    function GetTableName: string;
-    {$ENDIF}
     function HasField(const AFields: array of TField): Boolean;
     function ToJSONObject: TJSONObject;
     function ToJSONArray: TJSONArray;
@@ -39,6 +34,8 @@ type
     procedure New(const ABody: TJSONObject); overload;
     procedure New(const ABody: TJSONArray); overload;
     procedure New(const ABody: string); overload;
+    function  GetTableName(const CommandText: string): string;
+    function  RemoverEspacosParenteses(const Texto: string): string;
   public
     constructor Create(const AQuery: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF});
     property Query: {$IFDEF UNIDAC}TUniQuery{$ELSE}TFDQuery{$ENDIF} read FQuery write FQuery;
@@ -66,7 +63,7 @@ var
   LDeleted: Integer;
   LSql: string;
 begin
-  LSql := Format(DELETE_SQL, [{$IFDEF UNIDAC}GetTableName(AField){$ELSE}GetTableName{$ENDIF}, AField.FieldName]);
+  LSql := Format(DELETE_SQL, [GetTableName(FQuery.sql.Text), AField.FieldName]);
   LDeleted := FQuery.Connection.ExecSQL(LSql, [AValue]);
   if not DELETED[LDeleted] then
     RaiseNotFound;
@@ -99,7 +96,7 @@ procedure TRagna.FindById(const AField: TField; const AValue: Int64);
 var
   LField: string;
 begin
-  LField := {$IFDEF UNIDAC}GetTableName(AField){$ELSE}GetTableName{$ENDIF} + '.' + AField.Origin;
+  LField := GetTableName(FQuery.SQL.Text) + '.' + AField.Origin;
   FQuery.Reset.Where(LField).Equals(AValue);
 end;
 
@@ -107,21 +104,6 @@ procedure TRagna.EditFromJson(const AJSON: TJSONObject);
 begin
   FQuery.MergeFromJSONObject(AJSON, False);
 end;
-
-{$IFDEF UNIDAC}
-function TRagna.GetTableName(AField: TField): string;
-var
-  LFieldDesc: TSqlFieldDesc;
-begin
-  LFieldDesc := TSqlFieldDesc(FQuery.GetFieldDesc(AField));
-  Result := LFieldDesc.BaseTableName;
-end;
-{$ELSE}
-function TRagna.GetTableName: string;
-begin
-  Result := FQuery.Table.Table.SourceName;
-end;
-{$ENDIF}
 
 function TRagna.HasField(const AFields: array of TField): Boolean;
 begin
@@ -213,6 +195,67 @@ end;
 procedure TRagna.UpdateById(const AField: TField; const AValue: Int64; const ABody: TJSONObject);
 begin
   FQuery.FindById(AField, AValue).OpenUp.MergeFromJSONObject(ABody, False);
+end;
+
+function TRagna.GetTableName(const CommandText: string): string;
+var
+  LCopy: Boolean;
+  I, ParentesesAbertos: Integer;
+  Tabela, LFrom: string;
+begin
+  LCopy := False;
+  Tabela := EmptyStr;
+  Result := RemoverEspacosParenteses(CommandText.Replace('  ', EmptyStr));
+  ParentesesAbertos := 0;
+  for I := 1 to Result.Length do
+  begin
+    if Result[I] = '(' then
+    begin
+      if Copy(LowerCase(Result), I + 1, 6) = 'select' then
+      begin
+        Inc(ParentesesAbertos);
+        Continue;
+      end;
+      if ParentesesAbertos > 0 then
+        Inc(ParentesesAbertos);
+    end
+    else if (Result[I] = ')') and (ParentesesAbertos > 0) then
+    begin
+      Dec(ParentesesAbertos);
+      Continue;
+    end;
+    if (ParentesesAbertos = 0) then
+    begin
+      LFrom := Copy(Result, I-5, 5);
+      if LFrom.ToLower.Equals('from ') then
+        LCopy := True;
+      if LCopy then
+      begin
+        if Ord(Result[I]) = 10 then
+          Break;
+        Tabela := Tabela + Result[I];
+      end;
+    end;
+  end;
+  Result := Tabela.Trim;
+end;
+
+function TRagna.RemoverEspacosParenteses(const Texto: string): string;
+var
+  I: Integer;
+begin
+  Result := EmptyStr;
+  for I := 1 to Pred(Texto.Length) do
+  begin
+    if not Result.Trim.IsEmpty then
+    begin
+      if (Result[Result.Length] = '(') and (Texto[I] = ' ') then
+        Continue;
+      if (Texto[I] = ' ') and (Texto[I + 1] = ')') then
+        Continue;
+    end;
+    Result := Result + Texto[I];
+  end;
 end;
 
 end.
