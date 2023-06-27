@@ -16,6 +16,7 @@ type
     procedure &Equals(const AValue: Int64); overload;
     procedure &Equals(const AValue: Boolean); overload;
     procedure &Equals(const AValue: string); overload;
+    procedure &Equals(const AValue: TGuid); overload;
     procedure Order(const AField: string);
   end;
 
